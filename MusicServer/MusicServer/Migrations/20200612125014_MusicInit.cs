@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MusicServer.Migrations
@@ -41,6 +42,28 @@ namespace MusicServer.Migrations
                 {
                     table.PrimaryKey("PK_MusicInfos", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    UserID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    EmailID = table.Column<string>(nullable: true),
+                    DateOfBirth = table.Column<DateTime>(nullable: false),
+                    Password = table.Column<string>(nullable: true),
+                    userType = table.Column<int>(nullable: false),
+                    IsEmailVerified = table.Column<bool>(nullable: false),
+                    ActivationCode = table.Column<Guid>(nullable: false),
+                    ConfirmPassword = table.Column<string>(nullable: true),
+                    ResetPasswordCode = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserID);
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -50,6 +73,9 @@ namespace MusicServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "MusicInfos");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

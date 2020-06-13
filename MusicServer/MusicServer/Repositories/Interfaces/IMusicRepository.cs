@@ -1,4 +1,5 @@
 ﻿using MusicServer.Models.Database;
+using MusicServer.Models.Database.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace MusicServer.Repositories.Interfaces
         void Update(MusicInfo music);
 
         List<MusicInfo> GetAll();
+
+        List<MusicQueryData> GetWithUserID(uint userID);
 
         MusicInfo Get(Guid companyId);
 

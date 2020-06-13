@@ -22,13 +22,13 @@ namespace MusicServer.Controllers
             this.musicService = musicService;
         }
 
-
         // GET: api/Music
         //[HttpGet]
         //public IEnumerable<string> Get()
         //{
         //    return new string[] { "value1", "value2" };
         //}
+
 
         [HttpGet]
         public List<MusicQueryData> GetMusics()

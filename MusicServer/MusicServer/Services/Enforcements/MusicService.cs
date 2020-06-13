@@ -108,5 +108,18 @@ namespace MusicServer.Services.Enforcements
                 throw ex;
             }
         }
+
+        List<MusicQueryData> IMusicService.GetMusicListWithUserID(uint userID)
+        {
+            try
+            {
+                var musics = musicRepository.GetWithUserID(userID);
+                return musics;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
