@@ -1,0 +1,104 @@
+<div class="space-200"></div>
+<div class="container">
+    <h1>Music Asset Add</h1>  
+    <form class="form-style-12" #musicPost="ngForm" autocomplete="off" *ngIf="service.formData" (ngSubmit)="addMusic(musicPost.value)">
+        <ul>
+            <li>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Tên nhạc số</label>
+                        <input name="name" ngModel class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Tiêu đề</label>
+                        <input name="title" ngModel class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Album</label>
+                        <input name="album" ngModel class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Chủ sở hữu</label>
+                        <select *ngFor="let item of userList" class="form-control" name="ownerId" id="ownerId" ngModel>
+                            <option disabled>Select Creature Type</option>
+                            <option value="{{item.userID}}">{{item.firstName}} {{item.lastName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Năm xuất bản</label>
+                        <input name="publishingYear" ngModel class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Văn bằng bản quyền</label>
+                        <input type="file" name="licenceId" ngModel class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="creatureType">CreatureType:</label>
+                        <select class="form-control" name="creatureType" id="creatureType" ngModel>
+                            <option disabled>Select Creature Type</option>
+                            <option value="0">Unknown</option>
+                            <option value="1">Lyrics</option>
+                            <option value="2">Audio</option>
+                            <option value="3">MV</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ownerType">OwnerType:</label>
+                        <select class="form-control" name="ownerType" id="ownerType" ngModel>
+                            <option disabled>Select Owner Type</option>
+                            <option value="0">Unknown</option>
+                            <option value="1">Composer</option>
+                            <option value="2">SongWriter</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="musicAsset">Nhạc số:</label>
+                        <input type="file" class="form-control" name="musicAsset" id="musicAsset" ngModel>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="form-group" style="margin: 0 auto;">
+                    <input type="submit" value="Upload nhạc số" />
+                </div>
+            </li>
+        </ul>
+    </form>
+</div>
+<div class="container">
+    <div class="music-blk container">
+        <h1>Music Asset List</h1>  
+        <table class="blk-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Title</th>
+                    <th>Album</th>
+                    <th>Publishing Year</th>
+                    <th>Owner Id</th>
+                    <!-- <th>Licence Id</th> -->
+                    <th>Creature Type</th>
+                    <th>Owner Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of musicItemList">
+                    <td>{{item.name}}</td>
+                    <td>{{item.title}}</td>
+                    <td>{{item.album}}</td>    
+                    <td>{{item.publishingYear}}</td>
+                    <td>{{item.ownerId}}</td>
+                    <!-- <td>{{item.licenceId}}</td> -->
+                    <td>{{item.creatureType}}</td>
+                    <td>{{item.ownerType}}</td>
+                </tr>
+            </tbody>
+        </table>  
+    </div>
+</div>

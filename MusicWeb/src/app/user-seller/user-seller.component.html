@@ -1,0 +1,79 @@
+<div class="space-200"></div>
+<section class="container-fluid clearfix" style="margin-top: 50px; margin-left: 15%;">
+    <div class="row col-sm-9" style="margin: 100px 0 80px 0px; padding: 0; display: flex;">
+        <div class="infomation_user" style="position: relative; flex: 0.6;">
+            <div class="avatar_name_user clearfix">
+                <div class="div_picture_profile" style="position: absolute;">
+                    <img class="picture_profile" src="../../assets/man.png" alt="">
+                </div>
+
+                <label class="info_user_name">{{user.firstName}} {{user.lastName}}</label>
+            </div>
+            <div class="">
+                <div class="detail_info" style="margin-left: 5%; margin-top: 25px; display: block;">
+                    <label style="float: left;">Email: </label>
+                    <p style="margin-left: 75px; margin-right: 5%">{{user.emailID}}</p>
+                </div>
+                <div class="detail_info" style="margin-left: 5%; display: block;">
+                    <label style="float: left;">Giới tính: </label>
+                    <p style="margin-left: 75px; margin-right: 5%">Female</p>
+                </div>
+                <div class="detail_info" style="margin-left: 5%; display: block;">
+                    <label style="float: left;">Phone: </label>
+                    <p style="margin-left: 75px; margin-right: 5%">
+                        0542585625
+                    </p>
+                </div>
+                <div class="detail_info" style="margin-left: 5%; display: block;">
+                    <label style="float: left;">Địa chỉ: </label>
+                    <p style="margin-left: 75px; margin-right: 5%;">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.Lorem ipsum dolor sit amet!
+                    </p>
+                </div>
+                <div class="detail_info" style="margin-left: 20%; display: block; border: none;">
+                    <a href="/users/User/Logout" class="btn btn-danger" style="margin-right: 4px;">Đăng xuất</a>
+                    <a href="http://localhost:4200/music/statistic" class="btn btn-success">Trở về trang chủ</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="history_orders" style="flex: 1;">
+            <div class="one_history_order clearfix" *ngFor="let item of musicItemList; let indexOfelement=index;">
+                <div class="col-sm-3">
+                    <div style="margin-top: 21px;">
+                        <div class="lyrics" *ngIf="item.lyricsCheck">
+                            <img class="picture" src="../../assets/lyrics.png" alt="" style="width: 56%;">
+                            <p style="color: #ff2f8e; font-weight: 700;">{{item.creatureType}}</p>
+                        </div>
+                        <div class="audio" *ngIf="item.audioCheck">
+                            <img class="picture" src="../../assets/audio.png" alt="" style="width: 56%;" >
+                            <p style="color: #ff2f8e; font-weight: 700;">{{item.creatureType}}</p>
+                        </div>
+                        <div class="video" *ngIf="item.mvCheck">
+                            <img class="picture" src="../../assets/video.png" alt="" style="width: 56%;" >
+                            <p style="color: #ff2f8e; font-weight: 700;">{{item.creatureType}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-9" style="position: relative;">
+                    <p>Tài sản #{{indexOfelement+1}}</p>
+                    <span>{{item.dateCreated |  date:'dd'}} {{item.dateCreated |  date:'MMMM'}}</span>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="music-info">
+                        <h6>Tên tài sản: <label style="color: #ff2f8e;">{{item.name}}</label> <label style="color: gray; font-size: 15px; float: right;
+                            margin-right: 24%;">(Album Gốc: {{item.album}})</label></h6> 
+                        <h6>Chủ sở hữu: <label style="color: #ff2f8e;">{{item.ownerType}}</label></h6>
+                    </div>
+                    
+                    <hr>
+                    <div class="view_detail">
+                        <label>Trạng thái: {{item.transactionStatus}}</label>
+                        
+                        <a href="/users/User/UserOrderDetails/">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
