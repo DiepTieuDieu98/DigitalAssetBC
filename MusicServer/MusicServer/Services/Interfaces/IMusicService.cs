@@ -24,5 +24,6 @@ namespace MusicServer.Services.Interfaces
             OwnerTypes ownerType);
 
         List<MusicQueryData> GetAllMusics();
+        List<MusicQueryData> GetMusicListWithUserID(uint userID);
     }
 }

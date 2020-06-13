@@ -46,6 +46,7 @@ namespace MusicServer
             services.AddTransient<IEthereumService, EthereumService>();
             services.AddTransient<IMusicService, MusicService>();
             services.AddTransient<IMusicRepository, MusicRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<IUploadMusicService, UploadMusicService>();
             services.AddTransient<IMusicAssetRepository, MusicAssetRepository>();

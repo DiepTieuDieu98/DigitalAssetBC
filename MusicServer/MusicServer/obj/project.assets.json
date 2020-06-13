@@ -14170,11 +14170,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ALIENWARE.000\\Desktop\\MusicServer\\MusicServer\\MusicServer.csproj",
+      "projectUniqueName": "C:\\Users\\ALIENWARE.000\\Desktop\\MusicBC\\New folder\\MusicServer\\MusicServer\\MusicServer.csproj",
       "projectName": "MusicServer",
-      "projectPath": "C:\\Users\\ALIENWARE.000\\Desktop\\MusicServer\\MusicServer\\MusicServer.csproj",
+      "projectPath": "C:\\Users\\ALIENWARE.000\\Desktop\\MusicBC\\New folder\\MusicServer\\MusicServer\\MusicServer.csproj",
       "packagesPath": "C:\\Users\\ALIENWARE.000\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ALIENWARE.000\\Desktop\\MusicServer\\MusicServer\\obj\\",
+      "outputPath": "C:\\Users\\ALIENWARE.000\\Desktop\\MusicBC\\New folder\\MusicServer\\MusicServer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

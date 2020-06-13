@@ -10,7 +10,7 @@ using MusicServer.Models.Database;
 namespace MusicServer.Migrations
 {
     [DbContext(typeof(MusicDBContext))]
-    [Migration("20200609104209_MusicInit")]
+    [Migration("20200612125014_MusicInit")]
     partial class MusicInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,37 @@ namespace MusicServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MusicInfos");
+                });
+
+            modelBuilder.Entity("MusicServer.Models.Database.User", b =>
+                {
+                    b.Property<int>("UserID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<Guid>("ActivationCode");
+
+                    b.Property<string>("ConfirmPassword");
+
+                    b.Property<DateTime>("DateOfBirth");
+
+                    b.Property<string>("EmailID");
+
+                    b.Property<string>("FirstName");
+
+                    b.Property<bool>("IsEmailVerified");
+
+                    b.Property<string>("LastName");
+
+                    b.Property<string>("Password");
+
+                    b.Property<string>("ResetPasswordCode");
+
+                    b.Property<int>("userType");
+
+                    b.HasKey("UserID");
+
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }

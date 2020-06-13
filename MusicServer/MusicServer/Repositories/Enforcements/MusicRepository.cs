@@ -44,6 +44,29 @@ namespace MusicServer.Repositories.Enforcements
             return dbContext.MusicInfos.ToList();
         }
 
+        List<MusicQueryData> IMusicRepository.GetWithUserID(uint userID)
+        {
+            var result = from a in dbContext.MusicInfos
+                         where a.OwnerId == userID
+                         select new MusicQueryData()
+                         {
+                            Id = a.Id,
+                            Name = a.Name,
+                            Title = a.Title,
+                            Album = a.Album,
+                            PublishingYear = a.PublishingYear,
+                            OwnerId = a.OwnerId,
+                            LicenceId = a.LicenceId,
+                            CreatureType = a.CreatureType.ToString(),
+                            OwnerType = a.OwnerType.ToString(),
+                            TransactionHash = a.TransactionHash,
+                            ContractAddress = a.ContractAddress,
+                            DateCreated = a.DateCreated,
+                            TransactionStatus = a.TransactionStatus.ToString()
+                         };
+            return result.ToList();
+        }
+
         void IMusicRepository.Update(MusicInfo music)
         {
             dbContext.MusicInfos.Update(music);
