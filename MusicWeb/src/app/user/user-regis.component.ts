@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: 'app-user-regis',
@@ -11,7 +12,8 @@ export class UserRegisComponent implements OnInit {
   public userInfo: User;
   public apiURL = "https://localhost:5001/api";
   constructor(private http:HttpClient,
-    private router: Router) { }
+    private router: Router,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
   }
@@ -21,7 +23,16 @@ export class UserRegisComponent implements OnInit {
     this.http.post(this.apiURL + '/UserAuth/Registration', userInfo)
     .subscribe(()=>{
       // console.warn(userInfo);
-      this.router.navigate(['/music/statistic']);
+      this.toastr.success("Link xác nhận đã được gửi vào Email", "Success", {
+        positionClass: "toast-top-right",
+        timeOut: 1000
+      });
+      setTimeout(() => 
+      {
+        this.router.navigate(['/music/statistic']);
+      },
+      1000);
+      
     });
   }
 

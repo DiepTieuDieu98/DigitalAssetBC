@@ -1,1 +1,219 @@
-<p>user-buyer works!</p>
+<div class="space-100"></div>
+<div class="container">
+    <form class="form-style-12">
+        <ul>
+            <li>
+                <select class="form-control" id="sel1" style="flex: 0.15; border-radius: 0;">
+                    <option>All Filters</option>
+                    <option>Top Musics</option>
+                    <option>Newest Musics</option>
+                    <option>Top Artist</option>
+                </select>
+                <input type="email" name="field2" class="field-style field-split align-right" placeholder="Search by Music / Artist " style="flex: 1;"/>
+            </li>
+            <li>
+                <input type="submit" value="Send Message" />
+            </li>
+        </ul>
+    </form>
+</div>
+
+<!-- Main -->
+<div id="main">
+    <div class="inner">
+        <h3 style="color: black;" class="text-center">Bài hát mới nhất</h3>
+    <!-- Boxes -->
+        <div class="thumbnails">
+
+            <div class="box">
+                <div class="inner" style="position: relative;">
+                    <div class="wrapper">
+                        <main>
+                          <aside>
+                            <img src="../../assets/music-img.jpg" />
+                            <header>
+                              <a href="#menu"></a>
+                              <a href="#repeat-all"></a>
+                              <a href="#shuffle"></a>
+                              <a href="#repeat-one"></a>
+                            </header>
+                            <footer>
+                              <strong>Icona Pop</strong>
+                              <label>Still don't know</label>
+                            </footer>
+                          </aside>
+                          <div class="controls">
+                            <div class="volume">
+                              <em style="width: 50%"></em>
+                              <a href="" style="left: 50%"></a>
+                            </div>
+                            <a href="#share"></a>
+                            <a href="#prev"></a>
+                            <a href="#play"></a>
+                            <a href="#next"></a>
+                            <a href="#love"></a>
+                            <span class="progress"></span>
+                          </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="inner" style="position: relative;">
+                    <div class="wrapper">
+                        <main>
+                          <aside>
+                            <img src="../../assets/music-img.jpg" />
+                            <header>
+                              <a href="#menu"></a>
+                              <a href="#repeat-all"></a>
+                              <a href="#shuffle"></a>
+                              <a href="#repeat-one"></a>
+                            </header>
+                            <footer>
+                              <strong>Icona Pop</strong>
+                              <label>Still don't know</label>
+                            </footer>
+                          </aside>
+                          <div class="controls">
+                            <div class="volume">
+                              <em style="width: 50%"></em>
+                              <a href="" style="left: 50%"></a>
+                            </div>
+                            <a href="#share"></a>
+                            <a href="#prev"></a>
+                            <a href="#play"></a>
+                            <a href="#next"></a>
+                            <a href="#love"></a>
+                            <span class="progress"></span>
+                          </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="inner" style="position: relative;">
+                    <div class="wrapper">
+                        <main>
+                          <aside>
+                            <img src="../../assets/music-img.jpg" />
+                            <header>
+                              <a href="#menu"></a>
+                              <a href="#repeat-all"></a>
+                              <a href="#shuffle"></a>
+                              <a href="#repeat-one"></a>
+                            </header>
+                            <footer>
+                              <strong>Icona Pop</strong>
+                              <label>Still don't know</label>
+                            </footer>
+                          </aside>
+                          <div class="controls">
+                            <div class="volume">
+                              <em style="width: 50%"></em>
+                              <a href="" style="left: 50%"></a>
+                            </div>
+                            <a href="#share"></a>
+                            <a href="#prev"></a>
+                            <a href="#play"></a>
+                            <a href="#next"></a>
+                            <a href="#love"></a>
+                            <span class="progress"></span>
+                          </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="inner" style="position: relative;">
+                    <div class="wrapper">
+                        <main>
+                          <aside>
+                            <img src="../../assets/music-img.jpg" />
+                            <header>
+                              <a href="#menu"></a>
+                              <a href="#repeat-all"></a>
+                              <a href="#shuffle"></a>
+                              <a href="#repeat-one"></a>
+                            </header>
+                            <footer>
+                              <strong>Icona Pop</strong>
+                              <label>Still don't know</label>
+                            </footer>
+                          </aside>
+                          <div class="controls">
+                            <div class="volume">
+                              <em style="width: 50%"></em>
+                              <a href="" style="left: 50%"></a>
+                            </div>
+                            <a href="#share"></a>
+                            <a href="#prev"></a>
+                            <a href="#play"></a>
+                            <a href="#next"></a>
+                            <a href="#love"></a>
+                            <span class="progress"></span>
+                          </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="statistic-blk container">
+    <h3>Bài hát mới nhất</h3>
+    <table class="blk-table">
+        <thead>
+            <tr>
+                <th>Tên tác phẩm</th>
+                <th>Album</th>
+                <th>Đăng tải</th>
+                <th>Sáng tác</th>
+                <th>Sở hữu</th>
+                <th>Loại tài sản</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of musicItemList">
+                <td><a href="/music/user-buyer/{{item.id}}">{{item.name}}</a></td>
+                <td>{{item.album}}</td>
+                <td>{{item.publishingYear}}</td>   
+                <td>{{item.ownerId}}</td>  
+                <td>{{item.ownerId}}</td>
+                <td>{{item.creatureType}}</td>
+            </tr>
+        </tbody>
+    </table>  
+</div>
+<div class="space-50"></div>
+<div class="statistic-blk container">
+    <h3>Bảng xếp hạng</h3>
+    <table class="blk-table">
+        <thead>
+            <tr>
+                <th>Tên tác phẩm</th>
+                <th>Album</th>
+                <th>Đăng tải</th>
+                <th>Sáng tác</th>
+                <th>Sở hữu</th>
+                <th>Loại tài sản</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of musicItemList">
+                <td><a href="/music/user-buyer/{{item.id}}">{{item.name}}</a></td>
+                <td>{{item.album}}</td>
+                <td>{{item.publishingYear}}</td>   
+                <td>{{item.ownerId}}</td>  
+                <td>{{item.ownerId}}</td>
+                <td>{{item.creatureType}}</td>
+            </tr>
+        </tbody>
+    </table>   
+</div>
+<div class="space-50"></div>

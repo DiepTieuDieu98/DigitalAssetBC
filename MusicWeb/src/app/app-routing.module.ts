@@ -11,6 +11,7 @@ import { UserRegisComponent } from './user/user-regis.component';
 import { UserForgotComponent } from './user/user-forgot.component';
 import { UserResetComponent } from './user/user-reset.component';
 import { UserVerifyComponent } from './user/user-verify.component';
+import { UserBuyerItemComponent } from './user-buyer-item/user-buyer-item.component';
 
 
 const routes: Routes = [
@@ -19,14 +20,15 @@ const routes: Routes = [
     {path: 'main-page', component: MainPageComponent},
     {path: 'statistic', component: StatisticComponent},
     {path: 'music-info', component: MusicComponent},
-    {path: 'user-seller', component: UserSellerComponent},
-    {path: 'user-seller-item', component: UserSellerItemComponent},
+    {path: 'user-seller/:id', component: UserSellerComponent},
+    {path: 'user-seller-item/:id', component: UserSellerItemComponent},
     {path: 'user-buyer', component: UserBuyerComponent},
     {path: 'user-login', component: UserLoginComponent},
     {path: 'user-regis', component: UserRegisComponent},
     {path: 'user-forgot', component: UserForgotComponent},
     {path: 'user-reset', component: UserResetComponent},
-    {path: 'user-verify/:id', component: UserVerifyComponent}
+    {path: 'user-verify/:id', component: UserVerifyComponent},
+    {path: 'user-buyer/:id', component: UserBuyerItemComponent}
   ]}
 ];
 

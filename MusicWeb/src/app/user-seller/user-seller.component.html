@@ -10,9 +10,16 @@
                 <label class="info_user_name">{{user.firstName}} {{user.lastName}}</label>
             </div>
             <div class="">
-                <div class="detail_info" style="margin-left: 5%; margin-top: 25px; display: block;">
-                    <label style="float: left;">Email: </label>
-                    <p style="margin-left: 75px; margin-right: 5%">{{user.emailID}}</p>
+                <div class="detail_info" style="margin-left: 5%; margin-top: 25px; display: flex;">
+                    <div style="flex: 1;">
+                        <label style="float: left;">Email: </label>
+                        <p style="margin-left: 75px; margin-right: 5%">{{user.emailID}}</p>
+                    </div>
+                    <!-- Button trigger modal -->
+                    <div style="flex: 0.12;">
+                        <img src="../../assets/add.png" alt="" class="btn" style="width: 109%; cursor: pointer;" data-toggle="modal" data-target="#ownerAddr" (click)="loadAddrInfo()">
+                        
+                    </div >
                 </div>
                 <div class="detail_info" style="margin-left: 5%; display: block;">
                     <label style="float: left;">Giới tính: </label>
@@ -27,9 +34,45 @@
                 <div class="detail_info" style="margin-left: 5%; display: block;">
                     <label style="float: left;">Địa chỉ: </label>
                     <p style="margin-left: 75px; margin-right: 5%;">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.Lorem ipsum dolor sit amet!
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                     </p>
                 </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="ownerAddr" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <form class="form-style-12" #ownerAddrPost="ngForm" autocomplete="off" (ngSubmit)="updateOwnerAddr(ownerAddrPost.value)">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h6 class="modal-title" id="exampleModalLongTitle" style="color: black;">Owner Address</h6>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Owner Address</label>
+                                            <div style="display: flex;">
+                                                <div style="flex: 0.9;">
+                                                    <input name="ownerAddress" class="form-control" ngModel id="ownerAddrIdInput">
+                                                    <input name="ownerAddress" class="form-control" value="{{ownerAddr}}" id="ownerAddrId" disabled>
+                                                </div>
+                                                <div style="flex: 0.1;">
+                                                    <img src="../../assets/refresh.png" alt="" class="btn" style="width: 109%; cursor: pointer;" id="updateAddr">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="submit" class="btn btn-info" value="Lưu">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
                 <div class="detail_info" style="margin-left: 20%; display: block; border: none;">
                     <a href="/users/User/Logout" class="btn btn-danger" style="margin-right: 4px;">Đăng xuất</a>
                     <a href="http://localhost:4200/music/statistic" class="btn btn-success">Trở về trang chủ</a>
@@ -69,7 +112,7 @@
                     <div class="view_detail">
                         <label>Trạng thái: {{item.transactionStatus}}</label>
                         
-                        <a href="/users/User/UserOrderDetails/">View</a>
+                        <a href="/music/user-seller-item/{{item.id}}">View</a>
                     </div>
                 </div>
             </div>

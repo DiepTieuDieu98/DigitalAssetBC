@@ -22,6 +22,7 @@ import { UserVerifyComponent } from './user/user-verify.component';
 // import { NotifierModule } from "angular-notifier";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ToastrModule } from "ngx-toastr";
+import { UserBuyerItemComponent } from './user-buyer-item/user-buyer-item.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { ToastrModule } from "ngx-toastr";
     UserRegisComponent,
     UserForgotComponent,
     UserResetComponent,
-    UserVerifyComponent
+    UserVerifyComponent,
+    UserBuyerItemComponent
   ],
   imports: [
     BrowserModule,
