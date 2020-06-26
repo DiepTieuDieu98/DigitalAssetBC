@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MusicItem } from '../shared/music-item.model';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: 'app-user-seller',
@@ -10,21 +13,60 @@ import { MusicItem } from '../shared/music-item.model';
 export class UserSellerComponent implements OnInit {
   readonly rootUrl = "https://localhost:5001/api";
   public user: User;
+  public ownerAddrInfo: OwnerAddrInfo;
   public musicItemList: MusicItem[];
-  constructor(private http:HttpClient) { }
+  public ownerAddr: String;
+  constructor(private http:HttpClient,
+    private route: ActivatedRoute,
+    private router: Router,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getUserInfo();
     this.getMusicList();
+    this.loadAddrInfo();
+    
   }
 
   getUserInfo(){
-    return this.http.get(this.rootUrl + '/User/GetUserInfo/'+8).toPromise().then(res => this.user = res as User);
+    const userID = this.route.snapshot.paramMap.get('id');
+    this.http.get(this.rootUrl + '/User/GetUserInfo/'+userID).toPromise().then(res => this.user = res as User);
+  }
+
+  loadAddrInfo(){
+    const userID = this.route.snapshot.paramMap.get('id');
+    this.http.get(this.rootUrl + '/UserAuth/GetOwnerAddress/'+userID)
+    .subscribe(res =>{
+      sessionStorage.setItem('ownerAddress', res['ownerAddress']);
+    });
+    this.ownerAddr = sessionStorage['ownerAddress'];
+    
+  }
+
+  updateOwnerAddr(ownerInfo)
+  {
+    this.ownerAddrInfo = ownerInfo;
+    const userID = this.route.snapshot.paramMap.get('id');
+    this.ownerAddrInfo.userID = Number(userID);
+    this.http.post(this.rootUrl + '/UserAuth/UpdateOwnerAddress', this.ownerAddrInfo)
+    .subscribe(res=>{
+        this.toastr.success("Cập nhật thành công", "Success", {
+          positionClass: "toast-top-right",
+          timeOut: 2000
+        });
+        setTimeout(() => 
+        {
+          this.router.navigate(['/music/user-seller/'+userID]);
+        },
+        2000);
+    });
+    // console.log(this.ownerAddrInfo);
   }
 
   getMusicList()
   {
-    this.http.get(this.rootUrl + '/User/GetMusicAssetWithUser/'+8)
+    const userID = this.route.snapshot.paramMap.get('id');
+    this.http.get(this.rootUrl + '/User/GetMusicAssetWithUser/'+userID)
     .subscribe(res =>{
       this.musicItemList = res as MusicItem[];
       for(let i = 0; i < this.musicItemList.length; i++)
@@ -53,4 +95,9 @@ export class User {
   firstName: String;
   lastName: String;
   emailID: String; 
+}
+
+export class OwnerAddrInfo {
+  userID: Number;
+  ownerAddress: String;
 }

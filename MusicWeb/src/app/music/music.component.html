@@ -32,13 +32,13 @@
                     </div>
                     <div class="form-group">
                         <label>Văn bằng bản quyền</label>
-                        <input type="file" name="licenceId" ngModel class="form-control">
+                        <input type="file" name="licenceLink" (change)="onLicenceSelected($event)" ngModel class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="creatureType">CreatureType:</label>
                         <select class="form-control" name="creatureType" id="creatureType" ngModel>
                             <option disabled>Select Creature Type</option>
-                            <option value="0">Unknown</option>
+                            <option value="0" selected>Unknown</option>
                             <option value="1">Lyrics</option>
                             <option value="2">Audio</option>
                             <option value="3">MV</option>
@@ -48,7 +48,7 @@
                         <label for="ownerType">OwnerType:</label>
                         <select class="form-control" name="ownerType" id="ownerType" ngModel>
                             <option disabled>Select Owner Type</option>
-                            <option value="0">Unknown</option>
+                            <option value="0" selected>Unknown</option>
                             <option value="1">Composer</option>
                             <option value="2">SongWriter</option>
                         </select>
@@ -56,16 +56,27 @@
                 </div>
             </li>
             <li>
-                <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="musicType">Loại nhạc số:</label>
+                        <select class="form-control" (change)="musicTypeChange($event.target.value)" name="musicType" id="musicType">
+                            <option disabled>Select Owner Type</option>
+                            <option value="0">Lyrics</option>
+                            <option value="1">Audio</option>
+                            <option value="2">Video</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="musicAsset">Nhạc số:</label>
-                        <input type="file" class="form-control" name="musicAsset" id="musicAsset" ngModel>
+                        <input type="file" name="musicAsset" (change)="musicAssetChange($event)" id="musicAsset" ngModel class="form-control" disabled>
                     </div>
                 </div>
             </li>
             <li>
                 <div class="form-group" style="margin: 0 auto;">
-                    <input type="submit" value="Upload nhạc số" />
+                    <input type="submit"  value="Upload nhạc số" />
                 </div>
             </li>
         </ul>

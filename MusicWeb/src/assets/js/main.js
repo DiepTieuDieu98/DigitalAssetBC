@@ -1,5 +1,3 @@
-
-
 (function($) {
     "use strict";
     jQuery(document).on("ready", function() {
@@ -262,6 +260,116 @@
     });
   
     
+    });
+
+    $(document).on('change', '#typeLicence', function(e) {
+      var typeLicence = $(this).val();
+      if (parseInt(typeLicence, 0) == 0)
+      {
+        $('#typeDuration option:nth-child(2)').prop('selected', true);
+        $('#typeDuration').prop('disabled', true);
+
+        $('#duration option:nth-child(8)').prop('selected', true);
+        $('#duration').prop('disabled', true);
+
+        $('#reason').css('display', 'none');
+
+        $('#priceLicence').val(1);
+        
+      }
+      else
+      {
+        $('#typeDuration option:nth-child(3)').prop('selected', true);
+        $('#typeDuration').prop('disabled', true);
+
+        $('#duration option:nth-child(1)').prop('selected', true);
+        $('#duration').prop('disabled', false);
+        $('#duration option:nth-child(8)').prop('disabled', true);
+
+        $('#reason').css('display', 'block');
+
+        $('#priceLicence').val(1.0);
+      }
+      
+    });
+
+    $(document).on('change', '#musicType', function(e) {
+      var musicType = $(this).val();
+      if (parseInt(musicType, 0) != 0)
+      {
+        $('#musicAsset').prop('disabled', false);    
+      }
+    });    
+
+    $(document).on('click', '#updateAddr', function(e) {
+      
+      $('#ownerAddrId').css('display','none');
+      $('#ownerAddrIdInput').css('display','block');
+      
+    });
+
+    $(document).on('click', '#updateAddFrom', function(e) {
+      
+      $('#addFrom').css('display','none');
+      $('#addFromId').css('display','block');
+      
+    });
+
+    $(document).on('click', '#updateaddRe', function(e) {
+      
+      $('#addRe').css('display','none');
+      $('#addReId').css('display','block');
+      
+    });
+
+
+    
+    $(document).on('click', '#tile1 .settings', function(e){			
+
+      $('#tile1').addClass('animate');
+      $('#tile1 div.settings-form').css('display', 'block').delay('40').animate({'opacity': 1});
+  
+      setTimeout(function(){
+        $('#tile1 form div').css('display', 'block').animate({'opacity': 1, 'top':0}, 200);	
+      }, 40);
+      
+      setTimeout(function(){
+        $('#tile1 form button').css('display', 'block').animate({'opacity': 1, 'top':0}, 200);
+        $('#tile1 .cx, #tile1 .cy').addClass('s1');
+        setTimeout(function(){$('#tile1 .cx, #tile1 .cy').addClass('s2');}, 100);
+        setTimeout(function(){$('#tile1 .cx, #tile1 .cy').addClass('s3');}, 200);	
+      }, 100);		
+      
+    });		
+    
+    
+    $(document).on('click', '#tile1 .close', function(e){			
+  
+      $('#tile1 .cx, #tile1 .cy').removeClass('s1 s2 s3');	
+      
+      $('#tile1 form button').animate({'opacity': 0, 'top':-20}, 120, function(){$(this).css('display', 'none')});		
+      setTimeout(function(){
+        $('#tile1 form div').animate({'opacity': 0, 'top':-20}, 120, function(){
+          $(this).css('display', 'none')				
+        });	
+        $('#tile1 div.settings-form').animate({'opacity':0}, 120, function(){$(this).hide();});		      
+        
+        $('#tile1').removeClass('animate');
+      }, 50);								
+        
+    });
+  
+    
+    $(document).on('click', 'button', function(e){return false;});
+
+    $(document).on('click', '#approveId', function(e) {
+      
+      $('#approveTransact').modal('hide');
+      
+    });
+
+    $('audio').mediaelementplayer({
+      features: ['playpause','progress','current','tracks','fullscreen']
     });
 
 })(jQuery);

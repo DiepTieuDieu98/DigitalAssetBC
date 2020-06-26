@@ -4,7 +4,8 @@ export class Music {
     album: String;
     publishingYear: String;
     ownerId: Number;
-    licenceId: Number;
+    licenceLink: String;
+    musicLink: String;
     creatureType: String;
     ownerType: String;
 
