@@ -6,7 +6,10 @@ using MusicServer.Repositories.Interfaces;
 using MusicServer.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace MusicServer.Services.Enforcements
@@ -115,6 +118,129 @@ namespace MusicServer.Services.Enforcements
             return (uniqueFileName, blobClient.Uri.AbsoluteUri);
         }
 
+        void IUploadMusicService.DeleteFileInAzureBlob(string blobName, ResourceTypes resourceType)
+        {
+            // Create a BlobServiceClient object which will be used to create a container client
+            BlobServiceClient blobServiceClient = new BlobServiceClient(storageConnectionString);
+
+            //Create a unique name for the container
+            string containerName = "bug-container";
+            switch (resourceType)
+            {
+                case (ResourceTypes.Audio):
+                    {
+                        containerName = "audio";
+                        break;
+                    }
+                case (ResourceTypes.Lyrics):
+                    {
+                        containerName = "lyrics";
+                        break;
+                    }
+                case (ResourceTypes.Video):
+                    {
+                        containerName = "video";
+                        break;
+                    }
+                case (ResourceTypes.Licence):
+                    {
+                        containerName = "licence";
+                        break;
+                    }
+                case (ResourceTypes.Other):
+                default:
+                    {
+                        containerName = "other";
+                        break;
+                    }
+            }
+
+
+            // Create the container and return a container client object
+            var response = blobServiceClient.GetBlobContainerClient(containerName)
+                .CreateIfNotExistsAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+            BlobClient blobClient = containerClient.GetBlobClient(blobName);
+            blobClient.DeleteIfExistsAsync();
+        }
+
+        void IUploadMusicService.CopyFileEncryptAndUploadToAzureBlob(string blobName, ResourceTypes resourceType = ResourceTypes.Other)
+        {
+            // Create a BlobServiceClient object which will be used to create a container client
+            BlobServiceClient blobServiceClient = new BlobServiceClient(storageConnectionString);
+
+            //Create a unique name for the container
+            string containerName = "bug-container";
+            switch (resourceType)
+            {
+                case (ResourceTypes.Audio):
+                    {
+                        containerName = "audio";
+                        break;
+                    }
+                case (ResourceTypes.Lyrics):
+                    {
+                        containerName = "lyrics";
+                        break;
+                    }
+                case (ResourceTypes.Video):
+                    {
+                        containerName = "video";
+                        break;
+                    }
+                case (ResourceTypes.Licence):
+                    {
+                        containerName = "licence";
+                        break;
+                    }
+                case (ResourceTypes.Other):
+                default:
+                    {
+                        containerName = "other";
+                        break;
+                    }
+            }
+
+
+            // Create the container and return a container client object
+            var response = blobServiceClient.GetBlobContainerClient(containerName)
+                .CreateIfNotExistsAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+            BlobClient blobClient = containerClient.GetBlobClient(blobName);
+
+            string path_project_bin = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location.Substring(0, Assembly.GetEntryAssembly().Location.IndexOf("bin\\")));
+
+            
+            using (var fileStream = System.IO.File.OpenWrite(path_project_bin + "/bin/file-test/test" + blobName))
+            {
+                blobClient.DownloadTo(fileStream);
+                
+            }
+
+            (this as IUploadMusicService).AES_Decrypt(path_project_bin + "/bin/file-test/test" + blobName, path_project_bin + "/bin/file-test/test-decrypt" + blobName, "abc1212");
+            File.Delete(path_project_bin + "/bin/file-test/test" + blobName);
+
+            (this as IUploadMusicService).AES_Encrypt(path_project_bin + "/bin/file-test/test-decrypt" + blobName, path_project_bin + "/bin/file-test/test-encrypt" + blobName, "abc1313");
+            File.Delete(path_project_bin + "/bin/file-test/test-decrypt" + blobName);
+
+            using (var EncryptfileStream = System.IO.File.OpenRead(path_project_bin + "/bin/file-test/test-encrypt" + blobName))
+            {
+                blobClient.DeleteIfExistsAsync();
+
+                var fileName = System.IO.Path.GetFileNameWithoutExtension(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
+                var fileExtension = System.IO.Path.GetExtension(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
+                var uniqueFileName = fileName + "-" + Guid.NewGuid().ToString() + fileExtension;
+
+                BlobClient blobClientEncrypt = containerClient.GetBlobClient(uniqueFileName);
+                blobClientEncrypt.Upload(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
+            }
+
+            File.Delete(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
+            //blobClient.StartCopyFromUriAsync(blobClient.Uri);
+        }
+
         public string GetFileContentType(string FilePath)
         {
             string ContentType = string.Empty;
@@ -169,6 +295,79 @@ namespace MusicServer.Services.Enforcements
 
             var resourceUri = resource.Uri;
             return resourceUri;
+        }
+
+        void IUploadMusicService.AES_Encrypt(string inputFile, string outputFile, string password)
+        {
+            byte[] saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+            string cryptFile = outputFile;
+            FileStream fsCrypt = new FileStream(cryptFile, FileMode.Create);
+
+            RijndaelManaged AES = new RijndaelManaged();
+
+            AES.KeySize = 256;
+            AES.BlockSize = 128;
+
+            //convert password string to byte arrray
+            byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
+
+            var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
+            AES.Key = key.GetBytes(AES.KeySize / 8);
+            AES.IV = key.GetBytes(AES.BlockSize / 8);
+            AES.Padding = PaddingMode.Zeros;
+
+            AES.Mode = CipherMode.CBC;
+
+            CryptoStream cs = new CryptoStream(fsCrypt,
+                 AES.CreateEncryptor(),
+                CryptoStreamMode.Write);
+
+            FileStream fsIn = new FileStream(inputFile, FileMode.Open);
+
+            int data;
+            while ((data = fsIn.ReadByte()) != -1)
+                cs.WriteByte((byte)data);
+
+
+            fsIn.Close();
+            cs.Close();
+            fsCrypt.Close();
+
+        }
+
+        void IUploadMusicService.AES_Decrypt(string inputFile, string outputFile, string password)
+        {
+            byte[] saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+            FileStream fsCrypt = new FileStream(inputFile, FileMode.Open);
+
+            RijndaelManaged AES = new RijndaelManaged();
+
+            AES.KeySize = 256;
+            AES.BlockSize = 128;
+
+            //convert password string to byte arrray
+            byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
+            var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
+            AES.Key = key.GetBytes(AES.KeySize / 8);
+            AES.IV = key.GetBytes(AES.BlockSize / 8);
+            AES.Padding = PaddingMode.Zeros;
+
+            AES.Mode = CipherMode.CBC;
+
+            CryptoStream cs = new CryptoStream(fsCrypt,
+                AES.CreateDecryptor(),
+                CryptoStreamMode.Read);
+
+            FileStream fsOut = new FileStream(outputFile, FileMode.Create);
+
+            int data;
+            while ((data = cs.ReadByte()) != -1)
+                fsOut.WriteByte((byte)data);
+
+            fsOut.Close();
+            cs.Close();
+            fsCrypt.Close();
+
         }
     }
 }

@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MusicServer.Models.Database;
+using MusicServer.Models.Database.KPI;
 using MusicServer.Repositories.Interfaces;
+using MusicServer.Services.Interfaces;
 
 namespace MusicServer.Controllers
 {
@@ -16,12 +18,15 @@ namespace MusicServer.Controllers
     public class UserAuthController : ControllerBase
     {
         private readonly IUserRepository userRepository;
+        private readonly IPKIEncordeService pkiEncordeService;
         public readonly MusicDBContext dbContext;
 
         public UserAuthController(IUserRepository userRepository,
+            IPKIEncordeService pkiEncordeService,
             MusicDBContext dbContext)
         {
             this.userRepository = userRepository;
+            this.pkiEncordeService = pkiEncordeService;
             this.dbContext = dbContext;
         }
 
@@ -105,7 +110,7 @@ namespace MusicServer.Controllers
 
         //Login POST
         [HttpPost("Login")]
-        public IActionResult Login(UserLogin login, string ReturnUrl = "")
+        public IActionResult Login(UserLogin login)
         {
             string message = "";
 
@@ -123,14 +128,14 @@ namespace MusicServer.Controllers
                 }
                 else
                 {
-                    message = "Invalid credential provided";
-                    return StatusCode(StatusCodes.Status500InternalServerError, message);
+                    return Ok(new { UserID = 0 });
                 }
             }
             else
             {
-                message = "Invalid credential provided";
-                return StatusCode(StatusCodes.Status500InternalServerError, message);
+                //message = "Invalid credential provided";
+                //return StatusCode(StatusCodes.Status500InternalServerError, message);
+                return Ok(new { UserID = 0 });
             }
         }
 
@@ -272,6 +277,58 @@ namespace MusicServer.Controllers
                 message = "Something Invalid!";
                 return StatusCode(StatusCodes.Status500InternalServerError, message);
             }
+        }
+
+        [HttpGet("GetOwnerAddress/{UserID}")]
+        public IActionResult GetOwnerAddress(int UserID)
+        {
+            // Confirm password does not match issue on save changes
+            var v = dbContext.Users.Where(a => a.UserID == UserID).FirstOrDefault();
+            if (v.OwnerAddress != null && v.OwnerAddress != "")
+            {
+                return Ok(new { ownerAddress = v.OwnerAddress });
+            }
+            else
+            {
+                return Ok(new { ownerAddress = "" });
+            }
+        }
+
+        [HttpPost("UpdateOwnerAddress")]
+        public IActionResult UpdateOwnerAddress(OwnerAddressInfo ownerAddr)
+        {
+            string message = "";
+            var v = dbContext.Users.Where(a => a.UserID == ownerAddr.UserID).FirstOrDefault();
+            if (v != null)
+            {
+                v.OwnerAddress = ownerAddr.OwnerAddress;
+                dbContext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK, message);
+            }
+            else
+            {
+                message = "Error occur!";
+                return StatusCode(StatusCodes.Status500InternalServerError, message);
+            }
+
+        }
+
+
+        [HttpGet("KPITest")]
+        public IActionResult KPITest()
+        {
+             pkiEncordeService.GenerateGemFileForKPI(commonName: "mail.google.com",
+                            organization: "Google Inc.",
+                            organizationalUnit: "Information Technology",
+                            locality: "San Diego",
+                            state: "California",
+                            countryIso2Characters: "US",
+                            emailAddress: "support@google.com",
+                            signatureAlgorithm: SignatureAlgorithm.SHA256,
+                            rsaKeyLength: RsaKeyLength.Length2048Bits);
+
+             return StatusCode(StatusCodes.Status200OK);
+
         }
     }
 }

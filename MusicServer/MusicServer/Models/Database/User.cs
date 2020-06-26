@@ -18,5 +18,6 @@ namespace MusicServer.Models.Database
         public Guid ActivationCode { get; set; }
         public string ConfirmPassword { get; set; }
         public string ResetPasswordCode { get; set; }
+        public string OwnerAddress { get; set; }
     }
 }

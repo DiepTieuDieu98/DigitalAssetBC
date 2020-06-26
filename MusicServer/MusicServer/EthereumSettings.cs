@@ -25,5 +25,6 @@ namespace MusicServer
         public string ContractAddress { get; set; }
 
         public string MusicAbi { get; set; }
+        public string MusicAssetTransferAbi { get; set; }
     }
 }

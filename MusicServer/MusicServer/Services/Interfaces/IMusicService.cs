@@ -19,7 +19,8 @@ namespace MusicServer.Services.Interfaces
             string album,
             string publishingYear,
             uint ownerId,
-            uint licenceId,
+            string licenceLink,
+            string musicLink,
             CreatureTypes creatureType,
             OwnerTypes ownerType);
 

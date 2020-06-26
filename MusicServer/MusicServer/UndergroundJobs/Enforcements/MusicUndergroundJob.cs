@@ -66,7 +66,7 @@ namespace MusicServer.UndergroundJobs.Enforcements
                             music.Album,
                             music.PublishingYear,
                             music.OwnerId,
-                            music.LicenceId,
+                            music.LicenceLink,
                             (uint)music.CreatureType,
                             (uint)music.OwnerType
                         }).Result;

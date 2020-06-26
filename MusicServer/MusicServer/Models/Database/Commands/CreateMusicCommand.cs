@@ -12,7 +12,8 @@ namespace MusicServer.Models.Database.Commands
         public string Album { get; set; }
         public string PublishingYear { get; set; }
         public uint OwnerId { get; set; }
-        public uint LicenceId { get; set; }
+        public string LicenceLink { get; set; }
+        public string MusicLink { get; set; }
         public string CreatureType { get; set; }
         public string OwnerType { get; set; }
     }
