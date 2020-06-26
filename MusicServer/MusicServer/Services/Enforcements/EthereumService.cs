@@ -18,7 +18,7 @@ namespace MusicServer.Services.Enforcements
 {
     public class EthereumService : IEthereumService
     {
-        private readonly string ethereumAccount;
+        private string ethereumAccount;
         private readonly string ethereumPassword;
 
         private Web3 web3;
@@ -41,6 +41,7 @@ namespace MusicServer.Services.Enforcements
             //var privateKey = "0xf339dade22098c165d2a798f3c6895c44456ea7031ba0d841ed291dc9023e9f7";
             //var account = new Account(privateKey);
             //web3 = new Web3(account, "http://127.0.0.1:7545");
+
         }
 
         Contract IEthereumService.GetMasterContract()
@@ -51,7 +52,6 @@ namespace MusicServer.Services.Enforcements
             }
             return web3.Eth.GetContract(abi, masterContractAddress);
         }
-
 
         Function IEthereumService.GetFunction(string name)
         {
@@ -102,7 +102,7 @@ namespace MusicServer.Services.Enforcements
             return contract.GetFunction(name);
         }
 
-        string IEthereumService.GetTenantABI()
+        string IEthereumService.GetMusicABI()
         {
             return musicAbi;
         }
@@ -138,5 +138,7 @@ namespace MusicServer.Services.Enforcements
                 throw ex;
             }
         }
+
+        
     }
 }

@@ -17,7 +17,7 @@ namespace MusicServer.Utilities
                 Id = music.Id,
                 ContractAddress = music.ContractAddress,
                 DateCreated = music.DateCreated,
-                LicenceId = music.LicenceId,
+                MusicLink = music.LicenceLink,
                 Name = music.Name,
                 Title = music.Title,
                 PublishingYear = music.PublishingYear,

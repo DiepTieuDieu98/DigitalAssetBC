@@ -37,7 +37,8 @@ namespace MusicServer.Services.Enforcements
             string album,
             string publishingYear,
             uint ownerId,
-            uint licenceId,
+            string licenceLink,
+            string musicLink,
             CreatureTypes creatureType,
             OwnerTypes ownerType)
         {
@@ -51,7 +52,8 @@ namespace MusicServer.Services.Enforcements
                     Album = album,
                     PublishingYear = publishingYear,
                     OwnerId = ownerId,
-                    LicenceId = licenceId,
+                    LicenceLink = licenceLink,
+                    MusicLink = musicLink,
                     CreatureType = creatureType,
                     OwnerType = ownerType,
                     DateCreated = DateTime.UtcNow
@@ -70,7 +72,8 @@ namespace MusicServer.Services.Enforcements
                         album,
                         publishingYear,
                         ownerId,
-                        licenceId,
+                        licenceLink,
+                        musicLink,
                         (uint)creatureType,
                         (uint)ownerType
                     });

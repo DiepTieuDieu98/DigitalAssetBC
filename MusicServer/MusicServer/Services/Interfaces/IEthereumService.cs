@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Nethereum.Contracts;
 using Nethereum.RPC.Eth.DTOs;
+using Nethereum.Web3;
 
 namespace MusicServer.Services.Interfaces
 {
     public interface IEthereumService
     {
         string GetEthereumAccount();
-        string GetTenantABI();
+        string GetMusicABI();
 
         Contract GetMasterContract();
         Contract GetContract(string abi, string address);
@@ -30,6 +31,7 @@ namespace MusicServer.Services.Interfaces
         ///     This id is created by the backend in the creation process (before it is used to in creation transaction on blockchain.)
         /// </param>
         Task<string> GetObjectContractAddress(Guid id);
+        
 
         Task<TransactionReceipt> GetTransactionReceipt(string transactionHash);
     }

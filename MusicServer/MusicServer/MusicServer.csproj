@@ -22,11 +22,24 @@
     <Compile Remove="Migrations\20200607122231_MusicInit.Designer.cs" />
     <Compile Remove="Migrations\20200611160757_Music-Init.cs" />
     <Compile Remove="Migrations\20200611160757_Music-Init.Designer.cs" />
+    <Compile Remove="Migrations\20200612125014_MusicInit.cs" />
+    <Compile Remove="Migrations\20200612125014_MusicInit.Designer.cs" />
+    <Compile Remove="Migrations\20200616132536_InitMusic.cs" />
+    <Compile Remove="Migrations\20200616132536_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200616150530_InitMusic.cs" />
+    <Compile Remove="Migrations\20200616150530_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200616153612_InitMusic.cs" />
+    <Compile Remove="Migrations\20200616153612_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200617152016_MusicInit.cs" />
+    <Compile Remove="Migrations\20200617152016_MusicInit.Designer.cs" />
+    <Compile Remove="Migrations\20200618081756_InitMusic.cs" />
+    <Compile Remove="Migrations\20200618081756_InitMusic.Designer.cs" />
   </ItemGroup>
 
 
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.4.2" />
+    <PackageReference Include="BouncyCastle" Version="1.8.6.1" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.11" />
     <PackageReference Include="Hangfire.Core" Version="1.7.11" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.7.11" />

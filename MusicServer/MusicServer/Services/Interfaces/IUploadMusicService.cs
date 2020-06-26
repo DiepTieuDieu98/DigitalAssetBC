@@ -11,8 +11,16 @@ namespace MusicServer.Services.Interfaces
     {
         Task<(string, string)> UploadFileToAzureBlob(IFormFile file, ResourceTypes resourceType = ResourceTypes.Other);
 
+        void DeleteFileInAzureBlob(string blobName, ResourceTypes resourceType = ResourceTypes.Other);
+
+        void CopyFileEncryptAndUploadToAzureBlob(string blobName, ResourceTypes resourceType = ResourceTypes.Other);
+
         string SaveAzureBlobInfoToDatabaseAndReturnKey(string blobName, string uri);
 
         string GetFileUri(string fileName);
+
+        void AES_Encrypt(string inputFile, string outputFile, string password);
+
+        void AES_Decrypt(string inputFile, string outputFile, string password);
     }
 }
