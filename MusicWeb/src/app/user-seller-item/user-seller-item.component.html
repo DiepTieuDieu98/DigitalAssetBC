@@ -51,6 +51,7 @@
                         <th class="column100 column5" data-column="column5">Trạng thái</th>
                         <th class="column100 column6" data-column="column6">Transaction Hash</th>
                         <th class="column100 column6" data-column="column6">Xét duyệt</th>
+                        <th class="column100 column6" data-column="column6">Tạo khóa mới</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,7 +63,15 @@
                         <td class="column100 column5" data-column="column5">Pending</td>
                         <a href="https://ropsten.etherscan.io/tx/{{item.transactionHashLink}}"><td class="column100 column6" data-column="column6">{{item.transactionHash}}</td></a>
                         <td class="column100 column6" *ngIf="item.isConfirmed == false" data-column="column6"><a href="#" class="tag" data-toggle="modal" data-target="#approveTransact" (click)="aprroveTypeChange(item.id)">Duyệt</a></td>
-                        <td class="column100 column6" *ngIf="item.isConfirmed == true" data-column="column6"><a class="tag text-white" style="cursor: pointer;"> Đã Duyệt</a></td>
+                        <td class="column100 column6" *ngIf="item.isConfirmed == true" data-column="column6">
+                            <a class="tag text-white" style="cursor: pointer;"> Đã Duyệt</a>
+                        </td>
+                        <td class="column100 column6" *ngIf="item.isConfirmed == true" data-column="column6">
+                            <a href="/music/ownership/{{item.id}}_{{item.buyerId}}" class="tag text-white" style="cursor: pointer;">Change key</a>
+                        </td>
+                        <td class="column100 column6" *ngIf="item.isConfirmed == false" data-column="column6">
+                            <a class="tag text-white" style="cursor: pointer;">Not Allowed</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>

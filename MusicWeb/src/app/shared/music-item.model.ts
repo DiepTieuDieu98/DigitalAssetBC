@@ -14,6 +14,11 @@ export class MusicItem {
     mvCheck: boolean;
     ownerType: String;
 
+    key1: String;
+    fullKey: String;
+    mediaLink: String;
+    musicLink: String;
+
     transactionHash: String;
     contractAddress: String;
     transactionStatus: String;

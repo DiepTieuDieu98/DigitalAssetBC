@@ -35,7 +35,11 @@
               "src/assets/css/animation.css",
               "src/assets/css/material-design-iconic-font.min.css",
               "src/assets/css/style.css",
-              "src/assets/css/responsive.css"
+              "src/assets/css/responsive.css",
+              "src/assets/css/ckin.css",
+              "src/assets/css/audioplayer.css",
+              "src/assets/css/audio_style.css",
+              "src/assets/css/flaticon.css"
             ],
             "scripts": [
               "src/assets/js/jquery-2.2.4.min.js",
@@ -46,7 +50,9 @@
               "src/assets/js/skrollr.min.js",
               "src/assets/js/jquery.slicknav.min.js",
               "src/assets/js/particles.min.js",
-              "src/assets/js/main.js"
+              "src/assets/js/main.js",
+              "src/assets/js/ckin.js",
+              "src/assets/js/audioplayer.js"
             ]
           },
           "configurations": {

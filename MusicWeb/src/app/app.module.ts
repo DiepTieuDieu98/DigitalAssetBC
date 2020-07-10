@@ -4,6 +4,8 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+import {NgxPaginationModule} from 'ngx-pagination';
+
 import { MusicComponent } from './music/music.component';
 import { MusicService } from './shared/music.service';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -23,6 +25,10 @@ import { UserVerifyComponent } from './user/user-verify.component';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ToastrModule } from "ngx-toastr";
 import { UserBuyerItemComponent } from './user-buyer-item/user-buyer-item.component';
+import { AudioComponent } from './audio/audio.component';
+import { VideoComponent } from './video/video.component';
+import { CheckKeyComponent } from './check-key/check-key.component';
+import { OwnershipComponent } from './ownership/ownership.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +44,11 @@ import { UserBuyerItemComponent } from './user-buyer-item/user-buyer-item.compon
     UserForgotComponent,
     UserResetComponent,
     UserVerifyComponent,
-    UserBuyerItemComponent
+    UserBuyerItemComponent,
+    AudioComponent,
+    VideoComponent,
+    CheckKeyComponent,
+    OwnershipComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +57,8 @@ import { UserBuyerItemComponent } from './user-buyer-item/user-buyer-item.compon
     ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    NgxPaginationModule
   ],
   providers: [
     MusicService

@@ -29,7 +29,7 @@ export class UserSellerItemComponent implements OnInit {
 
   getTransacMusic(){
     const musicId = this.route.snapshot.paramMap.get('id');
-    this.http.get(this.rootUrl + '/MusicAssetTransfersController/GetMusicTransfers/'+musicId)
+    this.http.get(this.rootUrl + '/MusicAssetTransfers/GetMusicTransfers/'+musicId)
     .subscribe(
       res=>{
         this.musicTransact = res as MusicTransaction[];
@@ -47,7 +47,7 @@ export class UserSellerItemComponent implements OnInit {
 
   getLicenceTransacMusic(){
     const musicId = this.route.snapshot.paramMap.get('id');
-    this.http.get(this.rootUrl + '/MusicAssetTransfersController/GetLicenceMusicTransfers/'+musicId)
+    this.http.get(this.rootUrl + '/MusicAssetTransfers/GetLicenceMusicTransfers/'+musicId)
     .subscribe(
       res=>{
         this.licenceMusicTransact = res as MusicTransaction[];
@@ -71,7 +71,7 @@ export class UserSellerItemComponent implements OnInit {
   approveTransaction()
   {
     const musicAssetTranferId = sessionStorage.getItem(approveType);
-    this.http.get(this.rootUrl + '/MusicAssetTransfersController/'+musicAssetTranferId)
+    this.http.get(this.rootUrl + '/MusicAssetTransfers/'+musicAssetTranferId)
     .subscribe(
       res=>{
         this.approveMusicTransact = res as TransactionGet[];
@@ -80,7 +80,7 @@ export class UserSellerItemComponent implements OnInit {
         this.approveMusicTransact['duration'] = 0;
         // console.log(this.approveMusicTransact);
 
-        this.http.put(this.rootUrl + '/MusicAssetTransfersController/'+musicAssetTranferId, this.approveMusicTransact)
+        this.http.put(this.rootUrl + '/MusicAssetTransfers/'+musicAssetTranferId, this.approveMusicTransact)
         .subscribe(()=>{
           this.toastr.success("Giao dịch bản quyền thành công", "Success", {
             positionClass: "toast-top-right",
@@ -101,6 +101,7 @@ export class UserSellerItemComponent implements OnInit {
 export class MusicTransaction {
   id: String;
   musicId: String;
+  buyerId: String;
   fromId: String;
   toId: String;
   tranType: String;

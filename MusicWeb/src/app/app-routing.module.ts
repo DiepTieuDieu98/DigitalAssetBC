@@ -12,7 +12,10 @@ import { UserForgotComponent } from './user/user-forgot.component';
 import { UserResetComponent } from './user/user-reset.component';
 import { UserVerifyComponent } from './user/user-verify.component';
 import { UserBuyerItemComponent } from './user-buyer-item/user-buyer-item.component';
-
+import { AudioComponent } from './audio/audio.component';
+import { VideoComponent } from './video/video.component';
+import { CheckKeyComponent } from './check-key/check-key.component';
+import { OwnershipComponent } from './ownership/ownership.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'music/main-page', pathMatch:'full'},
@@ -28,7 +31,11 @@ const routes: Routes = [
     {path: 'user-forgot', component: UserForgotComponent},
     {path: 'user-reset', component: UserResetComponent},
     {path: 'user-verify/:id', component: UserVerifyComponent},
-    {path: 'user-buyer/:id', component: UserBuyerItemComponent}
+    {path: 'user-buyer/:id', component: UserBuyerItemComponent},
+    {path: 'check-key/:id', component: CheckKeyComponent},
+    {path: 'ownership/:id', component: OwnershipComponent},
+    {path: 'audio', component: AudioComponent},
+    {path: 'video', component: VideoComponent}
   ]}
 ];
 
