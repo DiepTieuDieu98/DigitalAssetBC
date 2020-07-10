@@ -4,6 +4,7 @@ import { MusicItem } from '../shared/music-item.model';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { ToastrService } from "ngx-toastr";
+export const UserTypeCheck = 'UserTypeCheck';
 
 @Component({
   selector: 'app-user-seller',
@@ -16,6 +17,9 @@ export class UserSellerComponent implements OnInit {
   public ownerAddrInfo: OwnerAddrInfo;
   public musicItemList: MusicItem[];
   public ownerAddr: String;
+  public userTypeCheck : String;
+  public totalRecords: number;
+  public page: number = 1;
   constructor(private http:HttpClient,
     private route: ActivatedRoute,
     private router: Router,
@@ -23,9 +27,8 @@ export class UserSellerComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUserInfo();
-    this.getMusicList();
+    this.getMusicListDefault();
     this.loadAddrInfo();
-    
   }
 
   getUserInfo(){
@@ -63,30 +66,93 @@ export class UserSellerComponent implements OnInit {
     // console.log(this.ownerAddrInfo);
   }
 
+  SetUserType()
+  {
+    sessionStorage.setItem(UserTypeCheck, "seller");
+    this.userTypeCheck = sessionStorage.getItem(UserTypeCheck);
+    this.getMusicList();
+  }
+
+  SetUserTypeBuyer()
+  {
+    sessionStorage.setItem(UserTypeCheck, "buyer");
+    this.userTypeCheck = sessionStorage.getItem(UserTypeCheck);
+    this.getMusicList();
+  }
+
+  getMusicListDefault()
+  {
+    sessionStorage.setItem(UserTypeCheck, "seller");
+    this.userTypeCheck = sessionStorage.getItem(UserTypeCheck);
+    this.getMusicList();
+  }
+
   getMusicList()
   {
-    const userID = this.route.snapshot.paramMap.get('id');
-    this.http.get(this.rootUrl + '/User/GetMusicAssetWithUser/'+userID)
-    .subscribe(res =>{
-      this.musicItemList = res as MusicItem[];
-      for(let i = 0; i < this.musicItemList.length; i++)
-        {
-          if (this.musicItemList[i].creatureType == "Lyrics")
+    // console.log(this.userType);
+    if (this.userTypeCheck == "seller")
+    {
+      const userID = this.route.snapshot.paramMap.get('id');
+      this.http.get(this.rootUrl + '/User/GetMusicAssetWithUser/'+userID)
+      .subscribe(res =>{
+        this.musicItemList = res as MusicItem[];
+        for(let i = 0; i < this.musicItemList.length; i++)
           {
-            this.musicItemList[i].lyricsCheck = true;
+            if (this.musicItemList[i].creatureType == "Lyrics")
+            {
+              this.musicItemList[i].lyricsCheck = true;
+            }
+            else if (this.musicItemList[i].creatureType == "Audio")
+            {
+              this.musicItemList[i].audioCheck = true;
+            }
+            else if (this.musicItemList[i].creatureType == "MV")
+            {
+              this.musicItemList[i].mvCheck = true;
+            }
+            if (res["key2"] != null)
+            {
+              this.musicItemList[i].key1 = res["key1"];
+            }
+            // if (this.musicItemList[i].mediaLink != "")
+            // {
+            //   this.musicItemList[i].mediaLink = btoa(this.musicItemList[i].mediaLink.toString());
+            // }
           }
-          else if (this.musicItemList[i].creatureType == "Audio")
+          this.totalRecords = this.musicItemList.length;
+        console.log(this.musicItemList);
+      });
+    }
+    else if (this.userTypeCheck == "buyer")
+    {
+      const userID = this.route.snapshot.paramMap.get('id');
+      this.http.get(this.rootUrl + '/User/GetMusicAssetWithUserBuyer/'+userID)
+      .subscribe(res =>{
+        this.musicItemList = res as MusicItem[];
+        for(let i = 0; i < this.musicItemList.length; i++)
           {
-            this.musicItemList[i].audioCheck = true;
+            if (this.musicItemList[i].creatureType == "Lyrics")
+            {
+              this.musicItemList[i].lyricsCheck = true;
+            }
+            else if (this.musicItemList[i].creatureType == "Audio")
+            {
+              this.musicItemList[i].audioCheck = true;
+            }
+            else if (this.musicItemList[i].creatureType == "MV")
+            {
+              this.musicItemList[i].mvCheck = true;
+            }
+            this.musicItemList[i].musicLink = this.musicItemList[i].musicLink.substring(49);
+            if (this.musicItemList[i].mediaLink != "")
+            {
+              this.musicItemList[i].mediaLink = btoa(this.musicItemList[i].mediaLink.toString());
+            }
           }
-          else if (this.musicItemList[i].creatureType == "MV")
-          {
-            this.musicItemList[i].mvCheck = true;
-          }
-        }
-      
-      // console.log(this.items);
-    });
+          this.totalRecords = this.musicItemList.length;
+          // console.log(this.musicItemList);
+      });
+    }
   }
 }
 

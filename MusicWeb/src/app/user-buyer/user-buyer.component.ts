@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MusicItem } from '../shared/music-item.model';
+declare const loadVideo: any;
 
 @Component({
   selector: 'app-user-buyer',
@@ -13,6 +14,7 @@ export class UserBuyerComponent implements OnInit {
   constructor(private http:HttpClient) { }
 
   ngOnInit(): void {
+    loadVideo();
     this.getMusicList();
   }
 

@@ -29,6 +29,7 @@ export class MusicService {
         timeOut: 4000
       });
         sessionStorage.removeItem('musicLink');
+        sessionStorage.removeItem('demoLink');
         sessionStorage.removeItem('licenceLink');
         sessionStorage.removeItem('musicType');
       setTimeout(() => 

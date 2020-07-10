@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from "ngx-toastr";
 
 export const UserID = 'UserID';
+export const UserType = 'UserType';
 
 @Component({
   selector: 'app-user-login',
@@ -14,6 +15,7 @@ export class UserLoginComponent implements OnInit {
   readonly rootUrl = "https://localhost:5001/api";
   public loginData: UserLogin;
   userID: string;
+  userType: Number;
   constructor(private http:HttpClient,
     private router: Router,
     private toastr: ToastrService) { }
@@ -28,6 +30,9 @@ export class UserLoginComponent implements OnInit {
     .subscribe(res =>{
       this.userID = res['userID'] as string;
       sessionStorage.setItem(UserID, this.userID);
+
+      this.userType = res['userType'] as Number;
+      sessionStorage.setItem(UserType, this.userType.toString());
       // console.log(sessionStorage['UserID']);
       if (sessionStorage['UserID'] != 0)
       {

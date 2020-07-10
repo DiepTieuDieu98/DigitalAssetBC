@@ -709,11 +709,12 @@ main
 	top: 561%;
 	left: 64%;
 	width: 269px;
-	height: 347px;
+	height: 293px;
 	overflow: visible;
 	margin: -240px 0 0 -180px;
 	box-shadow: 0 3px 10px rgba(0, 0, 0, .4);
 	border-radius: 30px;
+	background-color: rgba(94, 83, 152, .85);
 }
 
 main > aside
@@ -817,8 +818,9 @@ main > .controls
   left: 0;
   padding: 7px 0 0;
   height: 135px;
-  background: #EEEFF6;
+  background-color: rgba(94, 83, 152, 0);
   border-radius: 0 0 30px 30px;
+  color: white;
 }
 
 main > .controls > .volume
