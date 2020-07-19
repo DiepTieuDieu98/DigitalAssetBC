@@ -13,7 +13,9 @@ namespace MusicServer.Services.Interfaces
 
         void DeleteFileInAzureBlob(string blobName, ResourceTypes resourceType = ResourceTypes.Other);
 
-        void CopyFileEncryptAndUploadToAzureBlob(string blobName, ResourceTypes resourceType = ResourceTypes.Other);
+        void CopyFileEncryptAndUploadToAzureBlob(string blobName, string password, ResourceTypes resourceType = ResourceTypes.Other);
+
+        string CopyFileEncryptAndUploadToAzureBlobOwnerShip(string blobName, string old_password, string new_password, ResourceTypes resourceType = ResourceTypes.Other);
 
         string SaveAzureBlobInfoToDatabaseAndReturnKey(string blobName, string uri);
 

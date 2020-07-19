@@ -68,7 +68,7 @@ namespace MusicServer.Repositories.Enforcements
         List<MusicAssetTransfer> IMusicAssetTransferRepository.GetTransactMusic(Guid id)
         {
             var result = from a in dbContext.MusicAssetTransfers
-                         where a.IsPermanent == true
+                         where a.IsPermanent == false
                          where a.MusicId == id
                          select new MusicAssetTransfer()
                          {
@@ -76,6 +76,7 @@ namespace MusicServer.Repositories.Enforcements
                              MusicId = a.MusicId,
                              FromId = a.FromId,
                              ToId = a.ToId,
+                             BuyerId = a.BuyerId,
                              TranType = a.TranType,
                              FanType = a.FanType,
                              DateStart = a.DateStart,
@@ -92,7 +93,7 @@ namespace MusicServer.Repositories.Enforcements
         List<MusicAssetTransfer> IMusicAssetTransferRepository.GetLicenceTransactMusic(Guid id)
         {
             var result = from a in dbContext.MusicAssetTransfers
-                         where a.IsPermanent == false
+                         where a.IsPermanent == true
                          where a.MusicId == id
                          select new MusicAssetTransfer()
                          {
@@ -100,6 +101,7 @@ namespace MusicServer.Repositories.Enforcements
                              MusicId = a.MusicId,
                              FromId = a.FromId,
                              ToId = a.ToId,
+                             BuyerId = a.BuyerId,
                              TranType = a.TranType,
                              FanType = a.FanType,
                              DateStart = a.DateStart,
@@ -118,6 +120,18 @@ namespace MusicServer.Repositories.Enforcements
         {
             dbContext.MusicAssetTransfers.Update(musicAssetTransfer);
             dbContext.SaveChanges();
+        }
+
+        User IMusicAssetTransferRepository.GetUserInfo(int userID)
+        {
+            var result = dbContext.Users.Where(c => c.UserID == userID).SingleOrDefault();
+            return result;
+        }
+
+        MusicAssetTransfer IMusicAssetTransferRepository.GetSC(Guid musicId)
+        {
+            var result = dbContext.MusicAssetTransfers.Where(c => c.Id == musicId).SingleOrDefault();
+            return result;
         }
     }
 }

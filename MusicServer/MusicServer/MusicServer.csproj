@@ -34,6 +34,26 @@
     <Compile Remove="Migrations\20200617152016_MusicInit.Designer.cs" />
     <Compile Remove="Migrations\20200618081756_InitMusic.cs" />
     <Compile Remove="Migrations\20200618081756_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200707145106_InitMusic.cs" />
+    <Compile Remove="Migrations\20200707145106_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200708040308_InitMusic.cs" />
+    <Compile Remove="Migrations\20200708040308_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200708052247_InitMusic.cs" />
+    <Compile Remove="Migrations\20200708052247_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200708052636_InitMusic.cs" />
+    <Compile Remove="Migrations\20200708052636_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200708053045_InitMusic.cs" />
+    <Compile Remove="Migrations\20200708053045_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200708072229_InitMusic.cs" />
+    <Compile Remove="Migrations\20200708072229_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200708082207_InitMusic.cs" />
+    <Compile Remove="Migrations\20200708082207_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200708093545_InitMusic.cs" />
+    <Compile Remove="Migrations\20200708093545_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200708134324_InitMusic.cs" />
+    <Compile Remove="Migrations\20200708134324_InitMusic.Designer.cs" />
+    <Compile Remove="Migrations\20200710135704_InitMusic.cs" />
+    <Compile Remove="Migrations\20200710135704_InitMusic.Designer.cs" />
   </ItemGroup>
 
 
@@ -46,11 +66,15 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Azure.Management.Media" Version="2.0.5" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.1.7" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.4.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.10" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="Nethereum.HdWallet" Version="3.7.1" />
     <PackageReference Include="Nethereum.Web3" Version="3.7.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
 </Project>

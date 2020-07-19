@@ -23,6 +23,10 @@ namespace MusicServer.Services.Interfaces
 
         string GetMasterContractAddress();
 
+        void SetMasterContractAddress(string contractAddress);
+
+        Task<TransactionReceipt> DeployContract();
+
         /// <summary>
         /// Get address of object contracts on the blockchain network.
         /// </summary>

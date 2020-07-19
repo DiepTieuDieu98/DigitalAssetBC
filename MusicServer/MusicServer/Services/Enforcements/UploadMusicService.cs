@@ -165,7 +165,7 @@ namespace MusicServer.Services.Enforcements
             blobClient.DeleteIfExistsAsync();
         }
 
-        void IUploadMusicService.CopyFileEncryptAndUploadToAzureBlob(string blobName, ResourceTypes resourceType = ResourceTypes.Other)
+        void IUploadMusicService.CopyFileEncryptAndUploadToAzureBlob(string blobName, string password, ResourceTypes resourceType = ResourceTypes.Other)
         {
             // Create a BlobServiceClient object which will be used to create a container client
             BlobServiceClient blobServiceClient = new BlobServiceClient(storageConnectionString);
@@ -219,10 +219,89 @@ namespace MusicServer.Services.Enforcements
                 
             }
 
-            (this as IUploadMusicService).AES_Decrypt(path_project_bin + "/bin/file-test/test" + blobName, path_project_bin + "/bin/file-test/test-decrypt" + blobName, "abc1212");
+            //(this as IUploadMusicService).AES_Decrypt(path_project_bin + "/bin/file-test/test" + blobName, path_project_bin + "/bin/file-test/test-decrypt" + blobName, "abc1212");
+            //File.Delete(path_project_bin + "/bin/file-test/test" + blobName);
+
+            //(this as IUploadMusicService).AES_Encrypt(path_project_bin + "/bin/file-test/test-decrypt" + blobName, path_project_bin + "/bin/file-test/test-encrypt" + blobName, "abc1313");
+            //File.Delete(path_project_bin + "/bin/file-test/test-decrypt" + blobName);
+
+             (this as IUploadMusicService).AES_Decrypt(path_project_bin + "/bin/file-test/test" + blobName, path_project_bin + "/bin/file-test/test-decrypt" + blobName, password);
             File.Delete(path_project_bin + "/bin/file-test/test" + blobName);
 
-            (this as IUploadMusicService).AES_Encrypt(path_project_bin + "/bin/file-test/test-decrypt" + blobName, path_project_bin + "/bin/file-test/test-encrypt" + blobName, "abc1313");
+            //using (var EncryptfileStream = System.IO.File.OpenRead(path_project_bin + "/bin/file-test/test-encrypt" + blobName))
+            //{
+            //    blobClient.DeleteIfExistsAsync();
+
+            //    var fileName = System.IO.Path.GetFileNameWithoutExtension(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
+            //    var fileExtension = System.IO.Path.GetExtension(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
+            //    var uniqueFileName = fileName + "-" + Guid.NewGuid().ToString() + fileExtension;
+
+            //    BlobClient blobClientEncrypt = containerClient.GetBlobClient(uniqueFileName);
+            //    blobClientEncrypt.Upload(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
+            //}
+
+            //File.Delete(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
+            //blobClient.StartCopyFromUriAsync(blobClient.Uri);
+        }
+
+        string IUploadMusicService.CopyFileEncryptAndUploadToAzureBlobOwnerShip(string blobName, string old_password, string new_password, ResourceTypes resourceType = ResourceTypes.Other)
+        {
+            // Create a BlobServiceClient object which will be used to create a container client
+            BlobServiceClient blobServiceClient = new BlobServiceClient(storageConnectionString);
+
+            //Create a unique name for the container
+            string containerName = "bug-container";
+            switch (resourceType)
+            {
+                case (ResourceTypes.Audio):
+                    {
+                        containerName = "audio";
+                        break;
+                    }
+                case (ResourceTypes.Lyrics):
+                    {
+                        containerName = "lyrics";
+                        break;
+                    }
+                case (ResourceTypes.Video):
+                    {
+                        containerName = "video";
+                        break;
+                    }
+                case (ResourceTypes.Licence):
+                    {
+                        containerName = "licence";
+                        break;
+                    }
+                case (ResourceTypes.Other):
+                default:
+                    {
+                        containerName = "other";
+                        break;
+                    }
+            }
+
+
+            // Create the container and return a container client object
+            var response = blobServiceClient.GetBlobContainerClient(containerName)
+                .CreateIfNotExistsAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+            BlobClient blobClient = containerClient.GetBlobClient(blobName);
+
+            string path_project_bin = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location.Substring(0, Assembly.GetEntryAssembly().Location.IndexOf("bin\\")));
+
+
+            using (var fileStream = System.IO.File.OpenWrite(path_project_bin + "/bin/file-test/test" + blobName))
+            {
+                blobClient.DownloadTo(fileStream);
+
+            }
+
+            (this as IUploadMusicService).AES_Decrypt(path_project_bin + "/bin/file-test/test" + blobName, path_project_bin + "/bin/file-test/test-decrypt" + blobName, old_password);
+            File.Delete(path_project_bin + "/bin/file-test/test" + blobName);
+
+            (this as IUploadMusicService).AES_Encrypt(path_project_bin + "/bin/file-test/test-decrypt" + blobName, path_project_bin + "/bin/file-test/test-encrypt" + blobName, new_password);
             File.Delete(path_project_bin + "/bin/file-test/test-decrypt" + blobName);
 
             using (var EncryptfileStream = System.IO.File.OpenRead(path_project_bin + "/bin/file-test/test-encrypt" + blobName))
@@ -237,8 +316,13 @@ namespace MusicServer.Services.Enforcements
                 blobClientEncrypt.Upload(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
             }
 
+            string blobPath = "https://music98.blob.core.windows.net/video/";
+            string pathName = blobPath + "test-encrypt" + blobName;
+
             File.Delete(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
-            //blobClient.StartCopyFromUriAsync(blobClient.Uri);
+            blobClient.StartCopyFromUriAsync(blobClient.Uri);
+
+            return pathName;
         }
 
         public string GetFileContentType(string FilePath)

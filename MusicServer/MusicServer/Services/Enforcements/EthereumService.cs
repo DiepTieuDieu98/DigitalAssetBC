@@ -13,6 +13,7 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Signer;
 using Nethereum.KeyStore;
 using Nethereum.HdWallet;
+using System.Threading;
 
 namespace MusicServer.Services.Enforcements
 {
@@ -23,14 +24,16 @@ namespace MusicServer.Services.Enforcements
 
         private Web3 web3;
         private readonly string abi;
+        private readonly string byteCode;
         private readonly string musicAbi;
-        private readonly string masterContractAddress;
+        private string masterContractAddress;
 
         public EthereumService(IOptions<EthereumSettings> options)
         {
             ethereumAccount = options.Value.EthereumAccount;
             ethereumPassword = options.Value.EthereumPassword;
             abi = options.Value.Abi;
+            byteCode = options.Value.ByteCode;
             musicAbi = options.Value.MusicAbi;
             masterContractAddress = options.Value.ContractAddress;
 
@@ -38,7 +41,7 @@ namespace MusicServer.Services.Enforcements
             var account = new Account(privateKey);
             web3 = new Web3(account, "https://ropsten.infura.io/v3/aaceb4b7c236404e9eb5416bef5292e0");
 
-            //var privateKey = "0xf339dade22098c165d2a798f3c6895c44456ea7031ba0d841ed291dc9023e9f7";
+            //var privateKey = "0xddfc6aa09260f9fb648ece4a0a2e56c3de0d8bb2798ea90f484f6b6a2268ad25";
             //var account = new Account(privateKey);
             //web3 = new Web3(account, "http://127.0.0.1:7545");
 
@@ -87,6 +90,11 @@ namespace MusicServer.Services.Enforcements
             return masterContractAddress;
         }
 
+        void IEthereumService.SetMasterContractAddress(string contractAddress)
+        {
+            masterContractAddress = contractAddress;
+        }
+
         string IEthereumService.GetEthereumAccount()
         {
             return ethereumAccount;
@@ -105,6 +113,19 @@ namespace MusicServer.Services.Enforcements
         string IEthereumService.GetMusicABI()
         {
             return musicAbi;
+        }
+
+        async Task<TransactionReceipt> IEthereumService.DeployContract()
+        {
+            var transactionHash = await web3.Eth.DeployContract.SendRequestAsync(abi, byteCode, ethereumAccount, new HexBigInteger(6500000));
+            var receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
+
+            while (receipt == null)
+            {
+                receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
+            }
+            masterContractAddress = receipt.ContractAddress;
+            return receipt;
         }
 
         /// <summary>

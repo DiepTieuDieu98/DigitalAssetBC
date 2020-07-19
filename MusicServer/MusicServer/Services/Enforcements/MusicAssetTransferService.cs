@@ -37,105 +37,7 @@ namespace MusicServer.Services.Enforcements
             MusicAssetTransferAbi = options.Value.MusicAssetTransferAbi;
         }
 
-        async Task<Guid> IMusicAssetTransferService.Create(Guid musicId, string fromUserId, string toUserId, TranTypes tranType, FanTypes fanType, decimal amountValue)
-        {
-            //var music = musicRepository.Get(musicId);
-            uint currentTime = (uint)DateTime.UtcNow.ToUnixTimestamp();
-
-            var transfer = new MusicAssetTransfer()
-            {
-                MusicId = musicId,
-                FromId = fromUserId,
-                ToId = toUserId,
-                DateTransferred = currentTime,
-                TranType = tranType,
-                FanType = fanType,
-                DateStart = currentTime,
-                DateEnd = currentTime,
-                IsPermanent = true,
-                IsConfirmed = true,
-                DateCreated = DateTime.UtcNow,
-                AmountValue = amountValue
-            };
-            
-            var newTransferId = musicAssetTransferRepository.CreateAndReturnId(transfer);
-
-            //var privateKey = "0xC40B82DCA66F1B0F117851AEF8E40D197F55499B09858B89AF2F8FF3B4FE83F3";
-            //var account = new Account(privateKey);
-            //Web3 web3 = new Web3(account, "https://ropsten.infura.io/v3/aaceb4b7c236404e9eb5416bef5292e0");
-            //var transaction = web3.Eth.GetEtherTransferService().TransferEtherAndWaitForReceiptAsync(transfer.ToId.ToString(), amountValue);
-
-            var function = ethereumService.GetFunction(EthereumFunctions.AddTransactionMusic);
-
-            //var result = await function.CallAsync<string>(
-            //       ethereumService.GetEthereumAccount(),
-            //       new HexBigInteger(600000),
-            //       new HexBigInteger(0),
-            //       functionInput: new object[]
-            //       {
-            //            newTransferId.ToString(),
-            //            transfer.MusicId.ToString(),
-            //            transfer.FromId.ToString(),
-            //            transfer.ToId.ToString(),
-            //            transfer.DateTransferred,
-            //            transfer.TranType,
-            //            transfer.FanType,
-            //            transfer.DateStart,
-            //            transfer.DateEnd,
-            //            transfer.IsPermanent,
-            //            transfer.IsConfirmed
-            //       });
-
-            var transactionHash = await function.SendTransactionAsync(
-                ethereumService.GetEthereumAccount(),
-                new HexBigInteger(6000000),
-                new HexBigInteger(Nethereum.Web3.Web3.Convert.ToWei(10, UnitConversion.EthUnit.Gwei)),
-                new HexBigInteger(0),
-                functionInput: new object[] {
-                    newTransferId.ToString(),
-                    transfer.MusicId.ToString(),
-                    transfer.FromId.ToString(),
-                    transfer.ToId.ToString(),
-                    transfer.DateTransferred,
-                    transfer.TranType,
-                    transfer.FanType,
-                    transfer.DateStart,
-                    transfer.DateEnd,
-                    transfer.IsPermanent,
-                    transfer.IsConfirmed
-                });
-
-            transfer.TransactionHash = transactionHash;
-            musicAssetTransferRepository.Update(transfer);
-
-            bool isTransactionSuccess = false;
-            do
-            {
-                var receipt = ethereumService.GetTransactionReceipt(transfer.TransactionHash).Result;
-                if (receipt == null)
-                    continue;
-                if (receipt.Status.Value == (new HexBigInteger(1)).Value)
-                {
-                    isTransactionSuccess = true;
-                    var contractAddress = ethereumService.GetObjectContractAddress(transfer.Id).Result;
-                    transfer.ContractAddress = contractAddress;
-                    transfer.TransactionStatus = TransactionStatuses.Success;
-                    musicAssetTransferRepository.Update(transfer);
-
-                }
-            }
-            while (isTransactionSuccess != true);
-
-
-            //BackgroundJob.Schedule<IMusicAssetTransferUndergroundJob>(
-            //    job => job.WaitForTransactionToSuccessThenFinishCreating(transfer),
-            //    TimeSpan.FromSeconds(3)
-            //);
-
-            return newTransferId;
-        }
-
-        async Task<Guid> IMusicAssetTransferService.CreateLicenceTransaction(Guid musicId, string fromUserId, string toUserId, TranTypes tranType, FanTypes fanType, int duration, decimal amountValue)
+        async Task<Guid> IMusicAssetTransferService.Create(Guid musicId, string fromUserId, string toUserId, int buyerId, TranTypes tranType, FanTypes fanType, int duration, decimal amountValue, string key2)
         {
             var music = musicRepository.Get(musicId);
             DateTime startDate = DateTime.UtcNow;
@@ -148,42 +50,66 @@ namespace MusicServer.Services.Enforcements
                 MusicId = music.Id,
                 FromId = fromUserId,
                 ToId = toUserId,
+                BuyerId = buyerId,
+                Key2 = key2,
                 DateTransferred = currentTime,
                 TranType = tranType,
                 FanType = fanType,
                 DateStart = currentTime,
                 DateEnd = endDateTimeStamp,
                 IsPermanent = false,
-                IsConfirmed = false,
+                IsConfirmed = true,
                 DateCreated = DateTime.UtcNow,
                 AmountValue = amountValue
             };
 
-
             var newTransferId = musicAssetTransferRepository.CreateAndReturnId(transfer);
 
-            var function = ethereumService.GetFunction(EthereumFunctions.AddTransactionMusic);
-            var transactionHash = await function.SendTransactionAsync(
-                ethereumService.GetEthereumAccount(),
-                new HexBigInteger(6000000),
-                new HexBigInteger(Nethereum.Web3.Web3.Convert.ToWei(10, UnitConversion.EthUnit.Gwei)),
-                new HexBigInteger(0),
-                functionInput: new object[] {
-                    newTransferId.ToString(),
-                    transfer.MusicId.ToString(),
-                    transfer.FromId.ToString(),
-                    transfer.ToId.ToString(),
-                    transfer.DateTransferred,
-                    transfer.TranType,
-                    transfer.FanType,
-                    transfer.DateStart,
-                    transfer.DateEnd,
-                    transfer.IsPermanent,
-                    transfer.IsConfirmed
-                });
 
-            transfer.TransactionHash = transactionHash;
-            musicAssetTransferRepository.Update(transfer);
+            var deployContract = ethereumService.DeployContract();
+            bool isCreatedContract = false;
+            do
+            {
+                var receipt = deployContract.Result;
+                if (receipt == null)
+                    continue;
+                if (receipt.Status.Value == (new HexBigInteger(1)).Value)
+                {
+                    isCreatedContract = true;
+                    
+                    var function = ethereumService.GetFunction(EthereumFunctions.AddTransactionMusic);
+
+                    var transactionHash = await function.SendTransactionAsync(
+                        ethereumService.GetEthereumAccount(),
+                        new HexBigInteger(6000000),
+                        new HexBigInteger(Nethereum.Web3.Web3.Convert.ToWei(10, UnitConversion.EthUnit.Gwei)),
+                        new HexBigInteger(0),
+                        functionInput: new object[] {
+                            newTransferId.ToString(),
+                            transfer.MusicId.ToString(),
+                            transfer.FromId.ToString(),
+                            transfer.ToId.ToString(),
+                            transfer.Key2,
+                            transfer.TranType,
+                            transfer.FanType,
+                            transfer.DateStart,
+                            transfer.DateEnd,
+                            transfer.IsPermanent,
+                            transfer.IsConfirmed
+                        });
+
+                    var privateKey = musicAssetTransferRepository.GetUserInfo(buyerId).OwnerPrivateKey;
+                    //var privateKey = "0xC40B82DCA66F1B0F117851AEF8E40D197F55499B09858B89AF2F8FF3B4FE83F3";
+                    var account = new Account(privateKey);
+                    Web3 web3 = new Web3(account, "https://ropsten.infura.io/v3/aaceb4b7c236404e9eb5416bef5292e0");
+                    var transaction = web3.Eth.GetEtherTransferService().TransferEtherAndWaitForReceiptAsync(transfer.ToId.ToString(), amountValue);
+
+                    transfer.TransactionHash = transactionHash;
+                    transfer.ContractAddress = ethereumService.GetMasterContractAddress();
+                    musicAssetTransferRepository.Update(transfer);
+                }
+            }
+            while (isCreatedContract != true);
 
 
             BackgroundJob.Schedule<IMusicAssetTransferUndergroundJob>(
@@ -194,57 +120,158 @@ namespace MusicServer.Services.Enforcements
             return newTransferId;
         }
 
-        async Task IMusicAssetTransferService.UpdateLicenceTransaction(
-            Guid id,
-            Guid musicId,
-            string fromUserId,
-            string toUserId,
-            FanTypes fanType,
-            decimal amountValue
-            )
+        async Task<Guid> IMusicAssetTransferService.CreateLicenceTransaction(Guid musicId, string fromUserId, string toUserId, int buyerId, TranTypes tranType, FanTypes fanType, decimal amountValue)
         {
-            var transfer = musicAssetTransferRepository.Get(id);
+            var music = musicRepository.Get(musicId);
+            uint currentTime = (uint)DateTime.UtcNow.ToUnixTimestamp();
+
+            var transfer = new MusicAssetTransfer()
+            {
+                MusicId = music.Id,
+                FromId = fromUserId,
+                ToId = toUserId,
+                Key2 = "0",
+                DateTransferred = currentTime,
+                BuyerId = buyerId,
+                TranType = tranType,
+                FanType = fanType,
+                DateStart = currentTime,
+                DateEnd = currentTime,
+                IsPermanent = true,
+                IsConfirmed = false,
+                DateCreated = DateTime.UtcNow,
+                AmountValue = amountValue
+            };
+
+            var newTransferId = musicAssetTransferRepository.CreateAndReturnId(transfer);
+
+            var deployContract = ethereumService.DeployContract();
+            bool isCreatedContract = false;
+            do
+            {
+                var receipt = deployContract.Result;
+                if (receipt == null)
+                    continue;
+                if (receipt.Status.Value == (new HexBigInteger(1)).Value)
+                {
+                    isCreatedContract = true;
+
+                    var function = ethereumService.GetFunction(EthereumFunctions.AddTransactionMusic);
+                    var transactionHash = await function.SendTransactionAsync(
+                        ethereumService.GetEthereumAccount(),
+                        new HexBigInteger(6000000),
+                        new HexBigInteger(Nethereum.Web3.Web3.Convert.ToWei(10, UnitConversion.EthUnit.Gwei)),
+                        new HexBigInteger(0),
+                        functionInput: new object[] {
+                            newTransferId.ToString(),
+                            transfer.MusicId.ToString(),
+                            transfer.FromId.ToString(),
+                            transfer.ToId.ToString(),
+                            transfer.Key2,
+                            transfer.TranType,
+                            transfer.FanType,
+                            transfer.DateStart,
+                            transfer.DateEnd,
+                            transfer.IsPermanent,
+                            transfer.IsConfirmed
+                        });
+
+                    transfer.ContractAddress = ethereumService.GetMasterContractAddress();
+                    transfer.TransactionHash = transactionHash;
+                    musicAssetTransferRepository.Update(transfer);
+                }
+            }
+            while (isCreatedContract != true);
+
+            BackgroundJob.Schedule<IMusicAssetTransferUndergroundJob>(
+                job => job.WaitForTransactionToSuccessThenFinishCreating(transfer),
+                TimeSpan.FromSeconds(3)
+            );
+
+            return newTransferId;
+        }
+
+        async Task IMusicAssetTransferService.UpdateLicenceTransaction(Guid id, Guid musicId)
+        {
+            var transfer = musicAssetTransferRepository.GetSC(id);
             if (transfer == null)
             {
                 throw new ArgumentException("Id does not exist in the system.", nameof(id));
             }
             uint currentTime = (uint)DateTime.UtcNow.ToUnixTimestamp();
 
-            transfer.MusicId = musicId;
-            transfer.FromId = fromUserId;
-            transfer.ToId = toUserId;
-            transfer.FanType = fanType;
+            var music = musicRepository.Get(musicId);
+            if (music == null)
+            {
+                throw new ArgumentException("Music Id does not exist in the system.", nameof(musicId));
+            }
+
             transfer.IsConfirmed = true;
             transfer.DateTransferred = currentTime;
+            transfer.Key2 = music.Key2;
 
-            var privateKey = "0xC40B82DCA66F1B0F117851AEF8E40D197F55499B09858B89AF2F8FF3B4FE83F3";
+            var privateKey = musicAssetTransferRepository.GetUserInfo(transfer.BuyerId).OwnerPrivateKey;
+            //var privateKey = "0xC40B82DCA66F1B0F117851AEF8E40D197F55499B09858B89AF2F8FF3B4FE83F3";
             var account = new Account(privateKey);
             Web3 web3 = new Web3(account, "https://ropsten.infura.io/v3/aaceb4b7c236404e9eb5416bef5292e0");
-            var transaction = web3.Eth.GetEtherTransferService().TransferEtherAndWaitForReceiptAsync(transfer.ToId.ToString(), amountValue);
+            var transaction = web3.Eth.GetEtherTransferService().TransferEtherAndWaitForReceiptAsync(transfer.ToId.ToString(), transfer.AmountValue);
 
-            // Update the blockchain.
-            var contract = ethereumService.GetContract(MusicAssetTransferAbi, transfer.ContractAddress);
-            var updateFunction = ethereumService.GetFunction(contract, EthereumFunctions.UpdateMusicAssetTransfer);
-            var updateReceipt = await updateFunction.SendTransactionAsync(
-                ethereumService.GetEthereumAccount(),
-                new HexBigInteger(6000000),
-                new HexBigInteger(Nethereum.Web3.Web3.Convert.ToWei(20, UnitConversion.EthUnit.Gwei)),
-                new HexBigInteger(0),
-                functionInput: new object[] {
-                    transfer.MusicId.ToString(),
-                    transfer.FromId.ToString(),
-                    transfer.ToId.ToString(),
-                    transfer.FanType,
-                    transfer.DateTransferred,
-                    transfer.IsConfirmed
-                });
+            var deployContract = ethereumService.DeployContract();
+            bool isCreatedContract = false;
+            do
+            {
+                var receipt = deployContract.Result;
+                if (receipt == null)
+                    continue;
+                if (receipt.Status.Value == (new HexBigInteger(1)).Value)
+                {
+                    isCreatedContract = true;
 
-            musicAssetTransferRepository.Update(transfer);
+                    var function = ethereumService.GetFunction(EthereumFunctions.AddTransactionMusic);
+                    var transactionHash = await function.SendTransactionAsync(
+                        ethereumService.GetEthereumAccount(),
+                        new HexBigInteger(6000000),
+                        new HexBigInteger(Nethereum.Web3.Web3.Convert.ToWei(10, UnitConversion.EthUnit.Gwei)),
+                        new HexBigInteger(0),
+                        functionInput: new object[] {
+                            transfer.Id.ToString(),
+                            transfer.MusicId.ToString(),
+                            transfer.FromId.ToString(),
+                            transfer.ToId.ToString(),
+                            transfer.Key2,
+                            transfer.TranType,
+                            transfer.FanType,
+                            transfer.DateStart,
+                            transfer.DateEnd,
+                            transfer.IsPermanent,
+                            transfer.IsConfirmed
+                        });
+
+                    transfer.ContractAddress = ethereumService.GetMasterContractAddress();
+                    transfer.TransactionHash = transactionHash;
+                    musicAssetTransferRepository.Update(transfer);
+
+                    music.OwnerId = (uint)transfer.BuyerId;
+                    musicRepository.Update(music);
+                }
+            }
+            while (isCreatedContract != true);
+
+            BackgroundJob.Schedule<IMusicAssetTransferUndergroundJob>(
+                job => job.WaitForTransactionToSuccessThenFinishCreating(transfer),
+                TimeSpan.FromSeconds(3)
+            );
         }
 
         MusicAssetTransfer IMusicAssetTransferService.Get(Guid id)
         {
             var result = musicAssetTransferRepository.Get(id);
+            return result;
+        }
+
+        MusicAssetTransfer IMusicAssetTransferService.GetSC(Guid id)
+        {
+            var result = musicAssetTransferRepository.GetSC(id);
             return result;
         }
 
@@ -295,26 +322,28 @@ namespace MusicServer.Services.Enforcements
             return musicAssetTF.Result;
         }
 
-        async Task<string> IMusicAssetTransferService.GetContractAddress(Guid id)
-        {
-            var function = ethereumService.GetFunction("getAddressByID");
-            try
-            {
-                var result = await function.CallAsync<string>(
-                   ethereumService.GetEthereumAccount(),
-                   new HexBigInteger(600000),
-                   new HexBigInteger(0),
-                   functionInput: new object[]
-                   {
-                       id.ToString()
-                   });
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //async Task<string> IMusicAssetTransferService.GetContractAddress(Guid id)
+        //{
+        //    var music = musicRepository.Get(id);
+        //    ethereumService.SetMasterContractAddress(music.ContractAddress);
+        //    var function = ethereumService.GetFunction("getAddressByID");
+        //    try
+        //    {
+        //        var result = await function.CallAsync<string>(
+        //           ethereumService.GetEthereumAccount(),
+        //           new HexBigInteger(600000),
+        //           new HexBigInteger(0),
+        //           functionInput: new object[]
+        //           {
+        //               id.ToString()
+        //           });
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
 
         async Task IMusicAssetTransferService.Delete(Guid id)
@@ -347,6 +376,23 @@ namespace MusicServer.Services.Enforcements
                 );
 
                 musicAssetTransferRepository.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        async Task<MusicTransferSC> IMusicAssetTransferService.GetMusicTransfer(Guid id)
+        {
+            var musicTF = musicAssetTransferRepository.GetSC(id);
+            ethereumService.SetMasterContractAddress(musicTF.ContractAddress);
+            var function = ethereumService.GetFunction("getMusicAssetTransfer");
+            try
+            {
+                var result = await function.CallDeserializingToObjectAsync<MusicTransferSC>(id.ToString());
+
+                return result;
             }
             catch (Exception ex)
             {

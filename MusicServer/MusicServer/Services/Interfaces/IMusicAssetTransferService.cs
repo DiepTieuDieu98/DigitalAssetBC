@@ -13,30 +13,26 @@ namespace MusicServer.Services.Interfaces
             Guid musicId,
             string fromUserId,
             string toUserId,
+            int buyerId,
             TranTypes tranType,
             FanTypes fanType,
-            decimal amountValue
+            int duration,
+            decimal amountValue,
+            string key2
             );
 
         Task<Guid> CreateLicenceTransaction(
             Guid musicId,
             string fromUserId,
             string toUserId,
+            int buyerId,
             TranTypes tranType,
             FanTypes fanType,
-            int duration,
             decimal amountValue
             );
 
 
-        Task UpdateLicenceTransaction(
-            Guid id,
-            Guid musicId,
-            string fromUserId,
-            string toUserId,
-            FanTypes fanType,
-            decimal amountValue
-            );
+        Task UpdateLicenceTransaction(Guid id, Guid musicId);
 
 
         List<MusicAssetTransferQueryData> GetAll();
@@ -47,12 +43,16 @@ namespace MusicServer.Services.Interfaces
 
         MusicAssetTransfer Get(Guid id);
 
+        MusicAssetTransfer GetSC(Guid id);
+
         /// <summary>
         /// Get contract address of a tenant on blockchain network.
         /// </summary>
         /// <param name="id"></param>
-        Task<string> GetContractAddress(Guid id);
+        //Task<string> GetContractAddress(Guid id);
 
         Task Delete(Guid id);
+
+        Task<MusicTransferSC> GetMusicTransfer(Guid id);
     }
 }

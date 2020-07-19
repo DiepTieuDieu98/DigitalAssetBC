@@ -19,6 +19,7 @@ namespace MusicServer
         /// Abi of the master contract.
         /// </summary>
         public string Abi { get; set; }
+        public string ByteCode { get; set; }
         /// <summary>
         /// Address of the master contract on Ethereum blockchain.
         /// </summary>

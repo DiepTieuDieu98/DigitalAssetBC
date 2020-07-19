@@ -32,6 +32,11 @@ namespace MusicServer.Controllers
                     return BadRequest("FromUserId cannot be equal to ToUserId.");
                 }
 
+                if (command.Duration <= 0)
+                {
+                    return BadRequest("Duration cannot be less than 0");
+                }
+
                 if (command.AmountValue <= 0)
                 {
                     return BadRequest("AmountValue cannot be less than 0");
@@ -44,9 +49,12 @@ namespace MusicServer.Controllers
                     command.MusicId,
                     command.FromUserId,
                     command.ToUserId,
+                    command.BuyerId,
                     tranType,
                     fanType,
-                    command.AmountValue);
+                    command.Duration,
+                    command.AmountValue,
+                    command.Key2);
                 return Ok(new { MusicAssetTransferId = result });
             }
             catch (Exception ex)
@@ -67,11 +75,6 @@ namespace MusicServer.Controllers
                     return BadRequest("FromUserId cannot be equal to ToUserId.");
                 }
 
-                if (command.Duration <= 0)
-                {
-                    return BadRequest("Duration cannot be less than 0");
-                }
-
                 if (command.AmountValue <= 0)
                 {
                     return BadRequest("ValueAmount cannot be less than 0");
@@ -84,9 +87,9 @@ namespace MusicServer.Controllers
                     command.MusicId,
                     command.FromUserId,
                     command.ToUserId,
+                    command.BuyerId,
                     tranType,
                     fanType,
-                    command.Duration,
                     command.AmountValue);
                 return Ok(new { MusicAssetTransferId = result });
             }
@@ -96,34 +99,15 @@ namespace MusicServer.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPost("UpdateLicenceTransAsync")]
         public async Task<IActionResult> UpdateLicenceTransAsync(
-            Guid id,
-            [FromBody] CreateMusicAssetTransferCommand command
+            [FromBody] CreateApproveTransferCommand command
             )
         {
             try
             {
-                if (command.FromUserId == command.ToUserId)
-                {
-                    return BadRequest("FromUserId cannot be equal to ToUserId.");
-                }
-
-                if (command.AmountValue <= 0)
-                {
-                    return BadRequest("ValueAmount cannot be less than 0");
-                }
-
-                Enum.TryParse<FanTypes>(command.FanType, true, out FanTypes fanType);
-
-                await musicAssetTransferService.UpdateLicenceTransaction(
-                    id,
-                    command.MusicId,
-                    command.FromUserId,
-                    command.ToUserId,
-                    fanType,
-                    command.AmountValue);
-                return Ok();
+                await musicAssetTransferService.UpdateLicenceTransaction(command.id, command.musicId);
+                return StatusCode(StatusCodes.Status200OK);
             }
             catch (Exception ex)
             {
@@ -187,13 +171,28 @@ namespace MusicServer.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("{musicId}/contract-address")]
-        public async Task<IActionResult> GetContractAddress(Guid musicId)
+        //[HttpGet]
+        //[Route("{musicId}/contract-address")]
+        //public async Task<IActionResult> GetContractAddress(Guid musicId)
+        //{
+        //    try
+        //    {
+        //        var result = await musicAssetTransferService.GetContractAddress(musicId);
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex);
+        //    }
+        //}
+
+
+        [HttpGet("GetTransfer/{id}")]
+        public IActionResult GetTransfer(Guid id)
         {
             try
             {
-                var result = await musicAssetTransferService.GetContractAddress(musicId);
+                var result = musicAssetTransferService.GetSC(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -202,14 +201,14 @@ namespace MusicServer.Controllers
             }
         }
 
-
-        [HttpGet("{id}")]
-        public IActionResult GetTransfer(Guid id)
+        [HttpGet]
+        [Route("{musicTFId}/contract-address")]
+        public async Task<IActionResult> GetInfoContractAddress(Guid musicTFId)
         {
             try
             {
-                var result = musicAssetTransferService.Get(id);
-                return Ok(result);
+                var result = await musicAssetTransferService.GetMusicTransfer(musicTFId);
+                return Ok(new { Key2 = result.Key2 });
             }
             catch (Exception ex)
             {

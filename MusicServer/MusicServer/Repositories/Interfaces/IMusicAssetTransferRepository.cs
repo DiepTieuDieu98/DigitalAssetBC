@@ -19,5 +19,9 @@ namespace MusicServer.Repositories.Interfaces
         MusicAssetTransfer Get(Guid id);
 
         void Delete(Guid id);
+
+        User GetUserInfo(int userID);
+
+        MusicAssetTransfer GetSC(Guid id);
     }
 }
