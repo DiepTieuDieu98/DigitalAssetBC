@@ -24,6 +24,10 @@ namespace MusicServer.Models.Database
         public string ToId { get; set; }
         public User To { get; set; }
 
+        public int BuyerId { get; set; }
+        public string Key2 { get; set; }
+        public string MediaLink { get; set; }
+
         public uint DateTransferred { get; set; }
 
         public TranTypes TranType { get; set; }

@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace MusicServer.Models.Database
 {
-    public enum TranTypes
+    public class OwnerPrivateKeyInfo
     {
-        Unknown,
-        ForSale,
-        ForOwnerShip
+        public int UserID { get; set; }
+        public string OwnerPrivateKey { get; set; }
     }
 }

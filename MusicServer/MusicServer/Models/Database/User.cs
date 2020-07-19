@@ -19,5 +19,6 @@ namespace MusicServer.Models.Database
         public string ConfirmPassword { get; set; }
         public string ResetPasswordCode { get; set; }
         public string OwnerAddress { get; set; }
+        public string OwnerPrivateKey { get; set; }
     }
 }

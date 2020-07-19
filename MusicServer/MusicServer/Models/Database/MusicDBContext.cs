@@ -23,5 +23,6 @@ namespace MusicServer.Models.Database
         public DbSet<MusicAsset> MusicAssets { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<MusicAssetTransfer> MusicAssetTransfers { get; set; }
+        public DbSet<ShareOwnerShip> ShareOwnerShips { get; set; }
     }
 }
