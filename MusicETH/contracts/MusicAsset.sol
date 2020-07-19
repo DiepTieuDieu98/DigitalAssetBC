@@ -10,9 +10,9 @@ contract MusicAsset is Ownable {
     
     string public guid;
     string public name;
-    string public title;
     string public album;
     string public publishingYear;
+    string public key2;
     uint public ownerId;
     string public licenceLink;
     string public musicLink;
@@ -25,7 +25,7 @@ contract MusicAsset is Ownable {
     }
     
     function addMusicInformation(
-        string[5] memory stringInfo,
+        string[6] memory stringInfo,
         string[2] memory stringLink,
         uint[4] memory intId,
         address masterContractOwner)
@@ -34,9 +34,9 @@ contract MusicAsset is Ownable {
     {
         guid = stringInfo[0];
         name = stringInfo[1];
-        title = stringInfo[2];
-        album = stringInfo[3];
-        publishingYear = stringInfo[4];
+        album = stringInfo[2];
+        publishingYear = stringInfo[3];
+        key2 = stringInfo[4];
         ownerId = intId[0];
         licenceLink = stringLink[0];
         musicLink = stringLink[1];
@@ -46,10 +46,10 @@ contract MusicAsset is Ownable {
         transferOwnership(masterContractOwner);
     }
     
+    
 
     function updateMusicInformation(
         string memory _name,
-        string memory _title,
         string memory _album,
         string memory _publishingYear,
         uint _ownerId,
@@ -61,7 +61,6 @@ contract MusicAsset is Ownable {
         onlyOwner
     {
         name = _name;
-        title = _title;
         album = _album;
         publishingYear = _publishingYear;
         ownerId = _ownerId;
