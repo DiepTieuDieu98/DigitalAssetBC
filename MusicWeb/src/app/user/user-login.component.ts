@@ -29,12 +29,12 @@ export class UserLoginComponent implements OnInit {
     this.http.post(this.rootUrl + '/UserAuth/Login', loginData)
     .subscribe(res =>{
       this.userID = res['userID'] as string;
-      sessionStorage.setItem(UserID, this.userID);
+      localStorage.setItem(UserID, this.userID);
 
       this.userType = res['userType'] as Number;
-      sessionStorage.setItem(UserType, this.userType.toString());
-      // console.log(sessionStorage['UserID']);
-      if (sessionStorage['UserID'] != 0)
+      localStorage.setItem(UserType, this.userType.toString());
+      console.log(localStorage['UserID']);
+      if (localStorage['UserID'] != 0)
       {
         this.toastr.success("Đăng nhập thành công", "Success", {
           positionClass: "toast-top-right",
