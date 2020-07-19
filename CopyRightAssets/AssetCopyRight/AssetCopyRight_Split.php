@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,8 +6,13 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
 	<link rel="stylesheet" href="AssetCopyRight.css">
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
+	<?php 
+		define('ROOT', 'C:\xampp\htdocs\hdwallets');
+		require_once(ROOT. '/AssetCopyRight/Header.php');
+	?>
 	<div class="container">
 	    <article class="card">
 	        <header class="card-header"> Quản lý bản quyền </header>
@@ -33,16 +36,20 @@
 	            <ul class="row">
 	                <li class="col-md-12">
 						<div class="encrypt-file">
-					  		<h4 style="text-align: center;">Tải File Mã Hóa</h4>
+					  		<h4 style="text-align: center; color: black">Tạo bản Demo</h4>
 					  		<div style="" class="col-md-12">
-					  			<form method="POST" enctype="multipart/form-data" action="FileEncrypt.php">
+					  			<form method="POST" enctype="multipart/form-data" action="VideoSplit.php">
 						  			<div class="form-group">
-								    	<label for="file_encrypt">File mã hóa:</label>
-								    	<input type="file" name="file_encrypt" class="form-control" id="file_encrypt" required>
+								    	<label for="file_split">File gốc:</label>
+								    	<input type="file" name="file_split" class="form-control" id="file_split" required>
 								  	</div>
 								  	<div class="form-group">
-								    	<label for="text-logo">Mật khẩu mã hóa:</label>
-								    	<input type="password" name="pass_encrypt" class="form-control" placeholder="Enter password" id="pass_encrypt" required>
+								    	<label for="text-logo">Từ:</label>
+								    	<input type="text" name="cut_from" class="form-control" placeholder="00:00:00" id="cut_from" required>
+								  	</div>
+								  	<div class="form-group">
+								    	<label for="text-logo">Đến:</label>
+								    	<input type="text" name="duration" class="form-control" placeholder="00:00:00" id="duration" required>
 								  	</div>
 								  	<input type="submit" class="btn btn-success" value="Xác nhận">
 						  		</form>
@@ -54,6 +61,10 @@
 	        </div>
 	    </article>
 	</div>
+	<?php 
+		define('ROOT', 'C:\xampp\htdocs\hdwallets');
+		require_once(ROOT. '/AssetCopyRight/Footer.php');
+	?>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="AssetCopyRight.js"></script> 

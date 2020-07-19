@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,8 +6,13 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
 	<link rel="stylesheet" href="AssetCopyRight.css">
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
+	<?php 
+		define('ROOT', 'C:\xampp\htdocs\hdwallets');
+		require_once(ROOT. '/AssetCopyRight/Header.php');
+	?>
 	<div class="container">
 	    <article class="card">
 	        <header class="card-header"> Quản lý bản quyền </header>
@@ -44,6 +47,10 @@
 	        </div>
 	    </article>
 	</div>
+	<?php 
+		define('ROOT', 'C:\xampp\htdocs\hdwallets');
+		require_once(ROOT. '/AssetCopyRight/Footer.php');
+	?>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="AssetCopyRight.js"></script> 
