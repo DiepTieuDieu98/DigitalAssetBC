@@ -53,6 +53,7 @@ namespace MusicServer
             services.AddTransient<IMusicAssetRepository, MusicAssetRepository>();
             services.AddTransient<IMusicAssetTransferService, MusicAssetTransferService>();
             services.AddTransient<IPKIEncordeService, PKIEncordeService>();
+            services.AddTransient<IUploadEncodeAndStreamFiles, UploadEncodeAndStreamFiles>();
 
             services.AddDbContext<MusicDBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("WebApiDatabase")));

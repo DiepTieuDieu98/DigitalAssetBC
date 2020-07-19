@@ -32,6 +32,10 @@ namespace MusicServer.Migrations
                     OwnerId = table.Column<long>(nullable: false),
                     LicenceLink = table.Column<string>(nullable: true),
                     MusicLink = table.Column<string>(nullable: true),
+                    DemoLink = table.Column<string>(nullable: true),
+                    Key1 = table.Column<string>(nullable: true),
+                    Key2 = table.Column<string>(nullable: true),
+                    FullKey = table.Column<string>(nullable: true),
                     LicencePrice = table.Column<long>(nullable: false),
                     CreatureType = table.Column<int>(nullable: false),
                     OwnerType = table.Column<int>(nullable: false),
@@ -43,6 +47,19 @@ namespace MusicServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MusicInfos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShareOwnerShips",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    MusicId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShareOwnerShips", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,7 +78,8 @@ namespace MusicServer.Migrations
                     ActivationCode = table.Column<Guid>(nullable: false),
                     ConfirmPassword = table.Column<string>(nullable: true),
                     ResetPasswordCode = table.Column<string>(nullable: true),
-                    OwnerAddress = table.Column<string>(nullable: true)
+                    OwnerAddress = table.Column<string>(nullable: true),
+                    OwnerPrivateKey = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -83,6 +101,9 @@ namespace MusicServer.Migrations
                     FromUserID = table.Column<int>(nullable: true),
                     ToId = table.Column<string>(nullable: false),
                     ToUserID = table.Column<int>(nullable: true),
+                    BuyerId = table.Column<int>(nullable: false),
+                    Key2 = table.Column<string>(nullable: true),
+                    MediaLink = table.Column<string>(nullable: true),
                     DateTransferred = table.Column<long>(nullable: false),
                     TranType = table.Column<int>(nullable: false),
                     FanType = table.Column<int>(nullable: false),
@@ -138,6 +159,9 @@ namespace MusicServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "MusicAssetTransfers");
+
+            migrationBuilder.DropTable(
+                name: "ShareOwnerShips");
 
             migrationBuilder.DropTable(
                 name: "Users");

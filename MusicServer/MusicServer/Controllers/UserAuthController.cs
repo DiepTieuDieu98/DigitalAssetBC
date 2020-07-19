@@ -56,6 +56,7 @@ namespace MusicServer.Controllers
                 user.DateOfBirth = userlogin.DateOfBirth;
                 user.Password = userlogin.Password;
                 user.ConfirmPassword = userlogin.ConfirmPassword;
+                user.userType = userlogin.userType;
 
                 #region Generate Activation Code 
                 user.ActivationCode = Guid.NewGuid();
@@ -124,18 +125,18 @@ namespace MusicServer.Controllers
 
                 if (string.Compare(Crypto.Hash(login.Password), v.Password) == 0)
                 {
-                    return Ok(new { UserID = v.UserID });
+                    return Ok(new { UserID = v.UserID, UserType = v.userType });
                 }
                 else
                 {
-                    return Ok(new { UserID = 0 });
+                    return Ok(new { UserID = 0, UserType = 0 });
                 }
             }
             else
             {
                 //message = "Invalid credential provided";
                 //return StatusCode(StatusCodes.Status500InternalServerError, message);
-                return Ok(new { UserID = 0 });
+                return Ok(new { UserID = 0, UserType = 0 });
             }
         }
 
@@ -279,14 +280,14 @@ namespace MusicServer.Controllers
             }
         }
 
-        [HttpGet("GetOwnerAddress/{UserID}")]
-        public IActionResult GetOwnerAddress(int UserID)
+        [HttpGet("GetOwnerInfo/{UserID}")]
+        public IActionResult GetOwnerInfo(int UserID)
         {
             // Confirm password does not match issue on save changes
             var v = dbContext.Users.Where(a => a.UserID == UserID).FirstOrDefault();
             if (v.OwnerAddress != null && v.OwnerAddress != "")
             {
-                return Ok(new { ownerAddress = v.OwnerAddress });
+                return Ok(new { ownerAddress = v.OwnerAddress, ownerPrivateKey = v.OwnerPrivateKey });
             }
             else
             {
@@ -312,6 +313,26 @@ namespace MusicServer.Controllers
             }
 
         }
+
+        [HttpPost("UpdateOwnerPrivateKey")]
+        public IActionResult UpdateOwnerPrivateKey(OwnerPrivateKeyInfo ownerPrKey)
+        {
+            string message = "";
+            var v = dbContext.Users.Where(a => a.UserID == ownerPrKey.UserID).FirstOrDefault();
+            if (v != null)
+            {
+                v.OwnerPrivateKey = ownerPrKey.OwnerPrivateKey;
+                dbContext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK, message);
+            }
+            else
+            {
+                message = "Error occur!";
+                return StatusCode(StatusCodes.Status500InternalServerError, message);
+            }
+
+        }
+
 
 
         [HttpGet("KPITest")]

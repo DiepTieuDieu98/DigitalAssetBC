@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Extensions.Configuration;
 using MusicServer.Models.Database;
+using MusicServer.Models.Database.Commands;
 using MusicServer.Services.Interfaces;
 
 namespace MusicServer.Controllers
@@ -19,10 +22,12 @@ namespace MusicServer.Controllers
         private readonly String folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
         private readonly IConfiguration configuration;
         private readonly IUploadMusicService uploadMusicService;
+        private readonly IUploadEncodeAndStreamFiles uploadEncodeAndStreamFiles;
 
         public UploadMusicAssetController(
             IConfiguration configuration,
-            IUploadMusicService uploadMusicService)
+            IUploadMusicService uploadMusicService,
+            IUploadEncodeAndStreamFiles uploadEncodeAndStreamFiles)
         {
             if (!Directory.Exists(folderPath))
             {
@@ -30,6 +35,7 @@ namespace MusicServer.Controllers
             }
             this.configuration = configuration;
             this.uploadMusicService = uploadMusicService;
+            this.uploadEncodeAndStreamFiles = uploadEncodeAndStreamFiles;
         }
 
         [HttpPost("licence")]
@@ -75,21 +81,6 @@ namespace MusicServer.Controllers
             try
             {
                 uploadMusicService.DeleteFileInAzureBlob(blobName, ResourceTypes.Audio);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
-        }
-
-        [HttpPost("CopyFileEncryptAndUploadAudio")]
-        public IActionResult CopyFileEncryptAndUploadAudio(string blobName)
-        {
-
-            try
-            {
-                uploadMusicService.CopyFileEncryptAndUploadToAzureBlob(blobName, ResourceTypes.Audio);
                 return StatusCode(StatusCodes.Status200OK);
             }
             catch (Exception ex)
@@ -155,26 +146,25 @@ namespace MusicServer.Controllers
 
 
         [HttpPost("EncryptFileMusic")]
-        public IActionResult EncryptFileMusic(
-           [FromForm(Name = "myFile")]IFormFile myFile)
+        public IActionResult EncryptFileMusic([FromForm] CreateEncryptFileCommand command)
         {
 
             try
             {
-                var fileName = System.IO.Path.GetFileNameWithoutExtension(myFile.FileName);
-                var fileExtension = System.IO.Path.GetExtension(myFile.FileName);
+                var fileName = System.IO.Path.GetFileNameWithoutExtension(command.myFile.FileName);
+                var fileExtension = System.IO.Path.GetExtension(command.myFile.FileName);
 
                 string SavePath = Path.Combine(Directory.GetCurrentDirectory() + "/bin/file/", fileName+ fileExtension);
 
                 using (var stream = new FileStream(SavePath, FileMode.Create))
                 {
-                    myFile.CopyTo(stream);
+                    command.myFile.CopyTo(stream);
                 }
               
 
                 string filePathNew = Directory.GetCurrentDirectory() + "/bin/keys/" + fileName + "1" + fileExtension;
 
-                uploadMusicService.AES_Encrypt(SavePath, filePathNew, "abc1212");
+                uploadMusicService.AES_Encrypt(SavePath, filePathNew, command.password);
 
                 return StatusCode(StatusCodes.Status200OK);
             }
@@ -185,20 +175,19 @@ namespace MusicServer.Controllers
         }
 
         [HttpPost("DecryptFileMusic")]
-        public IActionResult DecryptFileMusic(
-           [FromForm(Name = "myFile")]IFormFile myFile)
+        public IActionResult DecryptFileMusic([FromForm] CreateEncryptFileCommand command)
         {
 
             try
             {
-                var fileName = System.IO.Path.GetFileNameWithoutExtension(myFile.FileName);
-                var fileExtension = System.IO.Path.GetExtension(myFile.FileName);
+                var fileName = System.IO.Path.GetFileNameWithoutExtension(command.myFile.FileName);
+                var fileExtension = System.IO.Path.GetExtension(command.myFile.FileName);
 
                 string filePath = Directory.GetCurrentDirectory() + "/bin/keys/" + fileName + fileExtension;
 
                 string filePathNew = Directory.GetCurrentDirectory() + "/bin/keys/" + fileName + "2" + fileExtension;
 
-                uploadMusicService.AES_Decrypt(filePath, filePathNew, "abc1313");
+                uploadMusicService.AES_Decrypt(filePath, filePathNew, command.password);
 
                 return StatusCode(StatusCodes.Status200OK);
             }
@@ -206,6 +195,118 @@ namespace MusicServer.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
+        }
+
+        [HttpPost("CopyFileEncryptAndUploadAudio")]
+        public IActionResult CopyFileEncryptAndUploadAudio([FromForm] DownloadEncryptFileCommand command)
+        {
+
+            try
+            {
+                uploadMusicService.CopyFileEncryptAndUploadToAzureBlob(command.blobName, command.password, ResourceTypes.Audio);
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpPost("CopyFileEncryptAndUploadAudioOwnerShip")]
+        public IActionResult CopyFileEncryptAndUploadAudioOwnerShip([FromForm] DownloadEncryptFileOwnerShipCommand command)
+        {
+
+            try
+            {
+                var urlLink = uploadMusicService.CopyFileEncryptAndUploadToAzureBlobOwnerShip(command.blobName, command.old_password, command.new_password, ResourceTypes.Video);
+                return Ok(new { musicLink = urlLink });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpPost("DownloadFileEncryptAndUploadMedia")]
+        public async Task<IActionResult> DownloadFileEncryptAndUploadMedia([FromForm] DownloadEncryptFileCommand command)
+        {
+
+            try
+            {
+                
+
+                ConfigWrapper config = new ConfigWrapper(new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("C:/Users/ALIENWARE.000/Desktop/Front/MusicServer/MusicServer/appsettings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build());
+
+                try
+                {
+                    uploadMusicService.CopyFileEncryptAndUploadToAzureBlob(command.blobName, command.password, ResourceTypes.Video);
+                    var urlStream = await uploadEncodeAndStreamFiles.RunAsync(config, command.blobName);
+                    return Ok(new { url = urlStream });
+                }
+                catch (Exception exception)
+                {
+                    if (exception.Source.Contains("ActiveDirectory"))
+                    {
+                        Console.Error.WriteLine("TIP: Make sure that you have filled out the appsettings.json file before running this sample.");
+                    }
+
+                    Console.Error.WriteLine($"{exception.Message}");
+
+                    ApiErrorException apiException = exception.GetBaseException() as ApiErrorException;
+                    if (apiException != null)
+                    {
+                        Console.Error.WriteLine(
+                            $"ERROR: API call failed with error code '{apiException.Body.Error.Code}' and message '{apiException.Body.Error.Message}'.");
+                    }
+                    return StatusCode(StatusCodes.Status500InternalServerError, apiException);
+                }
+                //return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpPost("MediaTest")]
+        public async Task<IActionResult> MediaTest(
+            [FromForm(Name = "myFile")]IFormFile myFile)
+        {
+            ConfigWrapper config = new ConfigWrapper(new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("C:/Users/ALIENWARE.000/Desktop/Front/MusicServer/MusicServer/appsettings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build());
+
+            var message = "";
+            try
+            {
+                var urlStream = await uploadEncodeAndStreamFiles.RunAsync(config, "sample1-0c6fd45a-6cc0-4bb9-92d4-b4815b76612b.mp4");
+                return Ok(new { url = urlStream });
+            }
+            catch (Exception exception)
+            {
+                if (exception.Source.Contains("ActiveDirectory"))
+                {
+                    Console.Error.WriteLine("TIP: Make sure that you have filled out the appsettings.json file before running this sample.");
+                }
+
+                Console.Error.WriteLine($"{exception.Message}");
+
+                ApiErrorException apiException = exception.GetBaseException() as ApiErrorException;
+                if (apiException != null)
+                {
+                    Console.Error.WriteLine(
+                        $"ERROR: API call failed with error code '{apiException.Body.Error.Code}' and message '{apiException.Body.Error.Message}'.");
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, apiException);
+            }
+
+
         }
 
         //// GET: api/UploadMusicAsset

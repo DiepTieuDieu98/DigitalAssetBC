@@ -37,6 +37,8 @@ namespace MusicServer.Migrations
 
                     b.Property<decimal>("AmountValue");
 
+                    b.Property<int>("BuyerId");
+
                     b.Property<string>("ContractAddress");
 
                     b.Property<DateTime>("DateCreated");
@@ -57,6 +59,10 @@ namespace MusicServer.Migrations
                     b.Property<bool>("IsConfirmed");
 
                     b.Property<bool>("IsPermanent");
+
+                    b.Property<string>("Key2");
+
+                    b.Property<string>("MediaLink");
 
                     b.Property<Guid>("MusicId");
 
@@ -97,6 +103,14 @@ namespace MusicServer.Migrations
 
                     b.Property<DateTime?>("DateCreated");
 
+                    b.Property<string>("DemoLink");
+
+                    b.Property<string>("FullKey");
+
+                    b.Property<string>("Key1");
+
+                    b.Property<string>("Key2");
+
                     b.Property<string>("LicenceLink");
 
                     b.Property<long>("LicencePrice");
@@ -122,6 +136,20 @@ namespace MusicServer.Migrations
                     b.ToTable("MusicInfos");
                 });
 
+            modelBuilder.Entity("MusicServer.Models.Database.ShareOwnerShip", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("MusicId");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShareOwnerShips");
+                });
+
             modelBuilder.Entity("MusicServer.Models.Database.User", b =>
                 {
                     b.Property<int>("UserID")
@@ -143,6 +171,8 @@ namespace MusicServer.Migrations
                     b.Property<string>("LastName");
 
                     b.Property<string>("OwnerAddress");
+
+                    b.Property<string>("OwnerPrivateKey");
 
                     b.Property<string>("Password");
 
