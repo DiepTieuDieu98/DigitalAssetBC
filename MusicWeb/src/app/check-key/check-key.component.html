@@ -32,6 +32,13 @@
                                 <a [href]="musicLinkTrust" class="btn btn-danger" *ngIf="fullKeyCheck == true && creatureType == 2" style="height: 29%;">Play Audio</a>
                             </div>
                         </form>
+                        <div class="progress" *ngIf="createMediaProgressCheck != null && createMediaProgressCheck == false">
+                            <div class="circle"></div>
+                            <div class="circle-small"></div>
+                            <div class="circle-big"></div>
+                            <div class="circle-inner-inner"></div>
+                            <div class="circle-inner"></div>
+                        </div>
                     </div>
                </div>
            </article>
