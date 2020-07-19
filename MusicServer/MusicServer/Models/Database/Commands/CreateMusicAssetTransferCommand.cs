@@ -12,6 +12,10 @@ namespace MusicServer.Models.Database.Commands
         public string FromUserId { get; set; }
         public string ToUserId { get; set; }
 
+        public int BuyerId { get; set; }
+
+        public string Key2 { get; set; }
+
         public string TranType { get; set; }
         public string FanType { get; set; }
 
