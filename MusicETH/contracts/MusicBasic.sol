@@ -3,7 +3,7 @@ pragma experimental ABIEncoderV2;
 import "./MusicAsset.sol";
 import "./MusicAssetTransfer.sol";
 
-contract MusicBasic is MusicAsset {
+contract MusicBasic {
 
     /** @dev stores medicine batch addresses || chain point addresses || medicine batch transfer by guid */
     mapping(bytes32 => address) private  contractAddresses;
@@ -30,13 +30,13 @@ contract MusicBasic is MusicAsset {
         newMussicAssetTransfer = new MusicAssetTransfer();
     }
 
-    // ================Music Functions================
+     // ================Music Functions================
     function addMusicAsset(
         string memory _guid,
         string memory _name,
-        string memory _title,
         string memory _album,
         string memory _publishingYear,
+        string memory _key2,
         uint _ownerId,
         string memory _licenceLink,
         string memory _musicLink,
@@ -47,12 +47,12 @@ contract MusicBasic is MusicAsset {
     {
         bytes32 key = getEncodeKey(_guid);
         
-        string[5] memory stringInfo;
+        string[6] memory stringInfo;
         stringInfo[0] = _guid;
         stringInfo[1] = _name;
-        stringInfo[2] = _title;
-        stringInfo[3] = _album;
-        stringInfo[4] = _publishingYear;
+        stringInfo[2] = _album;
+        stringInfo[3] = _publishingYear;
+        stringInfo[4] = _key2;
 
         string[2] memory stringLink;
         stringLink[0] = _licenceLink;
@@ -84,16 +84,14 @@ contract MusicBasic is MusicAsset {
     function getMusicAsset(uint _ownerId, string memory _guid)
         public
         view
-        returns (string memory, string memory, string memory, string memory, uint, string memory, string memory)
+        returns (string memory, string memory, string memory, uint, string memory)
     {
         MusicAsset result = musicAssets[getEncodeKeyWithUint(_ownerId)][_guid];
         return (result.name(),
-            result.title(),
             result.album(),
             result.publishingYear(),
             result.ownerId(),
-            result.licenceLink(),
-            result.musicLink());
+            result.key2());
     }
     // ================End Music Functions================
     
@@ -104,7 +102,7 @@ contract MusicBasic is MusicAsset {
         string memory _musicAssetId,
         string memory _fromOwnerId,
         string memory _toFanId,
-        uint _dateTransferred,
+        string memory _key2,
         uint8 _tranType,
         uint8 _fanType,
         uint _dateStart,
@@ -117,18 +115,18 @@ contract MusicBasic is MusicAsset {
         bytes32 key = getEncodeKey(_guid);
 
         
-        string[4] memory transactInfo;
+        string[5] memory transactInfo;
         transactInfo[0] = _guid;
         transactInfo[1] = _musicAssetId;
         transactInfo[2] = _fromOwnerId;
         transactInfo[3] = _toFanId;
+        transactInfo[4] = _key2;
 
-        uint[6] memory transacInfoInt;
-        transacInfoInt[0] = _dateTransferred;
-        transacInfoInt[1] = _tranType; //_tranType
-        transacInfoInt[2] = _fanType;
-        transacInfoInt[3] = _dateStart;
-        transacInfoInt[4] = _dateEnd;
+        uint[4] memory transacInfoInt;
+        transacInfoInt[0] = _tranType; //_tranType
+        transacInfoInt[1] = _fanType;
+        transacInfoInt[2] = _dateStart;
+        transacInfoInt[3] = _dateEnd;
         
         bool[2] memory transactInfoCheck;
         transactInfoCheck[0] = isPermanent;
@@ -149,7 +147,7 @@ contract MusicBasic is MusicAsset {
         string memory _guid)
         public
         view
-        returns (string memory id, string memory musicAssetId, string memory fromOwnerId, string memory toFanId, uint quantity, uint dateTransferred)
+        returns (string memory, string memory, string memory, string memory, string memory)
     {
         bytes32 key = getEncodeKey(_guid);
         MusicAssetTransfer result = newMussicAssetTransfers[key];
@@ -157,8 +155,7 @@ contract MusicBasic is MusicAsset {
             result.musicAssetId(),
             result.fromOwnerId(),
             result.toFanId(),
-            result.quantity(),
-            result.dateTransferred());
+            result.key2());
     }
 
     function removeMusicAssetTransfer(string memory _guid) public onlyAdmin {
