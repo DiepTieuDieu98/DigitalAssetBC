@@ -90,13 +90,9 @@
                                     <div class="form-group">
                                         <label for="typeLicence">Loại bản quyền:</label>
                                         <select class="form-control" id="typeLicence" (change)="licenceTypeChange($event.target.value)" name="typeLicence" style="flex: 0.15; border-radius: 0;">
-                                            <option disabled>Loại bản quyền</option>
-                                            <option value="0">Thương mại</option>
-                                            <option value="1" selected>Tái sản xuất</option>
-                                            <option value="2">Sao chép tác phẩm</option>
-                                            <option value="3">Phân phối tác phẩm</option>
-                                            <option value="4">Đăng tải Online</option>
-                                            <option value="5">Cho thuê</option>
+                                            <option disabled value="">Loại bản quyền</option>
+                                            <option value="0" selected>Thương mại</option>
+                                            <option value="1">Sở hữu</option>
                                         </select>
                                     </div>
                                 </div>
@@ -107,7 +103,7 @@
                                         <label for="addFrom">Địa chỉ gửi:</label>
                                         <div style="display: flex;">
                                             <div style="flex: 0.9;">
-                                                <input type="text" class="form-control" placeholder="Enter Address" id="addFrom" value="{{user.ownerAddress}}" disabled>
+                                                <input type="text" class="form-control" placeholder="Enter Address" id="addFrom" value="{{ownerAddress}}" disabled>
                                                 <input type="text" name="fromUserId" class="form-control" placeholder="Enter Address" id="addFromId" ngModel >
                                             </div>
                                             <div style="flex: 0.1;">
@@ -116,9 +112,16 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
+                                        <label>Người mua</label>
+                                        <select class="form-control" name="ownerId" id="ownerId" ngModel (change)="buyerChange($event.target.value)">
+                                            <option disabled value="">Select Creature Type</option>
+                                            <option *ngFor="let item of userList" value="{{item.userID}}">{{item.firstName}} {{item.lastName}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="typeCus">Loại khách hàng:</label>
                                         <select class="form-control" id="typeCus" name="fanType" style="flex: 0.15; border-radius: 0;" ngModel>
-                                            <option disabled>Chọn loại khách hàng</option>
+                                            <option disabled value="">Chọn loại khách hàng</option>
                                             <option value="0">Buyer</option>
                                             <option value="1">Listener</option>
                                             <option value="2">Singer</option>
@@ -127,7 +130,7 @@
                                     <div class="form-group">
                                         <label for="duration">Thời hạn giao dịch:</label>
                                         <select class="form-control" id="duration" name="duration" (change)="durationTypeChange($event.target.value)" style="flex: 0.15; border-radius: 0;">
-                                            <option disabled>Chọn thời hạn giao dịch</option>
+                                            <option disabled value="">Chọn thời hạn giao dịch</option>
                                             <option value="0">Giao dịch 7 ngày</option>
                                             <option value="1">Giao dịch 14 ngày</option>
                                             <option value="2">Giao dịch 1 tháng</option>
@@ -143,7 +146,7 @@
                                         <label for="addRe">Địa chỉ nhận:</label>
                                         <div style="display: flex;">
                                             <div style="flex: 0.9;">
-                                                <input type="text" class="form-control" placeholder="Enter Address" id="addRe" value="" disabled>
+                                                <input type="text" class="form-control" placeholder="Enter Address" id="addRe" value="{{user.ownerAddress}}" disabled>
                                                 <input type="text" name="toUserId" class="form-control" placeholder="Enter Address" id="addReId" ngModel>
                                             </div>
                                             <div style="flex: 0.1;">
@@ -153,10 +156,10 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="typeDuration">Loại thời hạn:</label>
-                                        <select class="form-control" id="typeDuration" name="typeDuration" style="flex: 0.15; border-radius: 0;">
-                                            <option disabled>Chọn thời hạn giao dịch</option>
+                                        <select class="form-control" id="typeDuration" name="typeDuration" style="flex: 0.15; border-radius: 0;" disabled>
+                                            <option disabled value="">Chọn thời hạn giao dịch</option>
                                             <option value="0">Giao dịch dài hạn</option>
-                                            <option value="1">Giao dịch ngắn hạn</option>
+                                            <option value="1" selected>Giao dịch ngắn hạn</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
@@ -164,7 +167,7 @@
                                         <input type="text" name="amountValue" class="form-control" id="priceLicence" value="1" disabled>
                                     </div>
                                 </div>	
-                                <div class="col-md-12" id="reason">
+                                <div class="col-md-12" id="reason" style="display: none;">
                                     <div class="form-group">
                                         <label for="reasonLicence">Lý do mua bản quyền:</label>
                                         <textarea class="form-control" id="reasonLicence" name="reasonLicence">
@@ -202,6 +205,13 @@
                             </div>
                             <input type="submit" class="btn btn-success" value="Xác nhận">
                         </form>
+                        <div class="progress" *ngIf="createProgressCheck != null && createProgressCheck == false">
+                            <div class="circle"></div>
+                            <div class="circle-small"></div>
+                            <div class="circle-big"></div>
+                            <div class="circle-inner-inner"></div>
+                            <div class="circle-inner"></div>
+                        </div>
                     </div>
                 </li>
             </ul>
