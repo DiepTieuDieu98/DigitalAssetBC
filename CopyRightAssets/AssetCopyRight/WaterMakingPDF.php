@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     $pdf->Image($source.'/'.$name.'.jpg', 130, 30, 0, 0, 'jpg');
     if ($outdir === TRUE){
         $pdf->Output($destination.'/'.'music-'.$name.'.pdf', 'F');
-        header("Location:http://localhost/hdwallets/AssetCopyRight/AssetCopyRight_Verify.php");
+        header("Location:http://localhost/hdwallets/AssetCopyRight/AssetCopyRight_Split.php");
     }
 }
 
