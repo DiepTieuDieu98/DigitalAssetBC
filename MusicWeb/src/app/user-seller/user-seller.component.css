@@ -27,7 +27,7 @@
 	/*float: left;*/
 	background-color: #f4fffe;
 	width: 550px;
-	height: 480px;
+	height: 539px;
 	margin-right: 50px;
 }
 .history_orders
@@ -209,6 +209,6 @@ div {
 	height: 200px;
   }
 
-#ownerAddrIdInput {
+#ownerAddrIdInput, #ownerPrKeyIdInput {
 	display: none;
 }

@@ -14,6 +14,11 @@ export class MusicItem {
     mvCheck: boolean;
     ownerType: String;
 
+    isPermanent: boolean;
+    isConfirmed: boolean;
+
+    transferId: String;
+
     key1: String;
     fullKey: String;
     mediaLink: String;

@@ -6,7 +6,7 @@ export const UserID = 'UserID';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  public userID = sessionStorage.getItem(UserID);
+  public userID = localStorage.getItem(UserID);
 
   title = 'MusicWeb';
 }

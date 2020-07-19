@@ -16,6 +16,8 @@ import { AudioComponent } from './audio/audio.component';
 import { VideoComponent } from './video/video.component';
 import { CheckKeyComponent } from './check-key/check-key.component';
 import { OwnershipComponent } from './ownership/ownership.component';
+import { OriginMusicComponent } from './origin-music/origin-music.component';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   {path: '', redirectTo: 'music/main-page', pathMatch:'full'},
@@ -23,8 +25,8 @@ const routes: Routes = [
     {path: 'main-page', component: MainPageComponent},
     {path: 'statistic', component: StatisticComponent},
     {path: 'music-info', component: MusicComponent},
-    {path: 'user-seller/:id', component: UserSellerComponent},
-    {path: 'user-seller-item/:id', component: UserSellerItemComponent},
+    {path: 'user-seller/:id', canActivate: [AuthGuard], component: UserSellerComponent},
+    {path: 'user-seller-item/:id', canActivate: [AuthGuard], component: UserSellerItemComponent},
     {path: 'user-buyer', component: UserBuyerComponent},
     {path: 'user-login', component: UserLoginComponent},
     {path: 'user-regis', component: UserRegisComponent},
@@ -34,6 +36,7 @@ const routes: Routes = [
     {path: 'user-buyer/:id', component: UserBuyerItemComponent},
     {path: 'check-key/:id', component: CheckKeyComponent},
     {path: 'ownership/:id', component: OwnershipComponent},
+    {path: 'origin-music/:id', component: OriginMusicComponent},
     {path: 'audio', component: AudioComponent},
     {path: 'video', component: VideoComponent}
   ]}
