@@ -11,7 +11,7 @@ export const UserID = 'UserID';
 export class OwnershipComponent implements OnInit {
   readonly rootUrl = "https://localhost:5001/api";
   public keyInfo: Key1;
-  public userID = sessionStorage.getItem(UserID);
+  public userID = localStorage.getItem(UserID);
   public hashedMessageKey1: String;
   public signatureKey1: String;
   public pValue: String;
@@ -27,10 +27,12 @@ export class OwnershipComponent implements OnInit {
   public fullKeyNew: string;
   public musicNewLink : string;
   public musicInfoUpdatefullKeyNew: MusicInfoUpdate;
+  public musicChaneOwnerShip: MusicChaneOwnerShip;
   public updateCheck: boolean;
   public updateProgressCheck: boolean;
   public updateMusicInfoCheck: boolean;
   public inheritUserId: Number;
+  public ownerId: Number;
   constructor(private http:HttpClient,
     private toastr: ToastrService,
     private route: ActivatedRoute) { }
@@ -41,19 +43,49 @@ export class OwnershipComponent implements OnInit {
     this.updateCheck = false;
     this.updateMusicInfoCheck = false;
     const infoMusic = this.route.snapshot.paramMap.get('id');
-    this.inheritUserId = Number.parseInt(infoMusic.split("_")[1]);
+    if (Number.parseInt(infoMusic.split("_")[1]) != 0)
+    {
+      this.inheritUserId = Number.parseInt(infoMusic.split("_")[1]);
+    }
+    else this.inheritUserId = 0;
   }
 
   getMusicInfo()
   {
     const infoMusic = this.route.snapshot.paramMap.get('id');
-    this.http.get(this.rootUrl + '/Music/GetMusicWithId/'+infoMusic.split("_")[0])
+    if (Number.parseInt(infoMusic.split("_")[1]) == 0)
+    {
+      this.musicId = infoMusic.split("_")[0];
+      this.http.get(this.rootUrl + '/Music/GetMusicWithId/'+this.musicId)
+        .subscribe(res =>{
+            this.fullKeyOld = res["fullKey"];
+            this.blobName = res["musicLink"].split("//")[1].split("/")[2];
+            this.ownerId = res["ownerId"];
+            this.http.get(this.rootUrl + '/Music/'+this.musicId+'_'+this.ownerId+'/contract-address')
+              .subscribe(res =>{
+                  this.key2 = res["key2"];
+              });
+        });
+    }
+    else
+    {
+      this.http.get(this.rootUrl + '/MusicAssetTransfers/GetTransfer/'+infoMusic.split("_")[0])
       .subscribe(res =>{
-          this.key2 = res["key2"];
-          this.fullKeyOld = res["fullKey"];
-          this.blobName = res["musicLink"].substring(49);
-          // console.log(this.blobName);
+          this.musicId = res["musicId"];
+          this.http.get(this.rootUrl + '/Music/GetMusicWithId/'+this.musicId)
+          .subscribe(res =>{
+              this.fullKeyOld = res["fullKey"];
+              this.blobName = res["musicLink"].split("//")[1].split("/")[2];  
+              this.ownerId = res["ownerId"];          
+          });
       });
+
+      this.http.get(this.rootUrl + '/MusicAssetTransfers/'+infoMusic.split("_")[0]+'/contract-address')
+        .subscribe(res =>{
+            this.key2 = res["key2"];
+        });
+    }
+    
   }
 
   changeOwnerShip()
@@ -75,34 +107,60 @@ export class OwnershipComponent implements OnInit {
           timeOut: 2000
         });
       });
-
-    // console.log(this.musicInfoUpdatefullKeyNew);
-    // console.log(this.assetUpdate);
   }
 
   updateInfoForMusic(ownerInfo)
   {
     const infoMusic = this.route.snapshot.paramMap.get('id');
+    
     this.musicInfoUpdatefullKeyNew = ownerInfo;
-
     if (this.inheritUserId != 0)
     {
       this.musicInfoUpdatefullKeyNew.ownerId = this.inheritUserId;
     }
-    this.musicInfoUpdatefullKeyNew.musicId = infoMusic.split("_")[0];
+    this.musicInfoUpdatefullKeyNew.musicId = this.musicId.toString();
     this.musicInfoUpdatefullKeyNew.key1 = this.fullKey1X;
     this.musicInfoUpdatefullKeyNew.fullKey = this.fullKeyNew;
     this.musicInfoUpdatefullKeyNew.musicLink = this.musicNewLink;
 
     this.http.post(this.rootUrl + '/Music/UpdateKey', this.musicInfoUpdatefullKeyNew)
     .subscribe(
-      res=>{
-        this.updateMusicInfoCheck = true;
-        this.toastr.success("Cập nhật nhạc số thành công", "Success", {
-          positionClass: "toast-top-right",
-          timeOut: 2000
+    res=>{
+
+    });
+
+    if (Number.parseInt(infoMusic.split("_")[1]) == 0)
+    {
+      this.musicChaneOwnerShip = new MusicChaneOwnerShip();
+      this.musicChaneOwnerShip.id = this.musicId;
+      this.musicChaneOwnerShip.ownerId = this.musicInfoUpdatefullKeyNew.ownerId;
+      this.musicChaneOwnerShip.musicLink = this.musicInfoUpdatefullKeyNew.musicLink;
+      this.http.post(this.rootUrl + '/Music/UpdateChangeOwnerShipAsync', this.musicChaneOwnerShip)
+      .subscribe(
+        res=>{
+          this.updateMusicInfoCheck = true;
+          this.toastr.success("Cập nhật nhạc số thành công", "Success", {
+            positionClass: "toast-top-right",
+            timeOut: 2000
+          });
         });
-      });
+    }
+    else
+    {
+      this.musicChaneOwnerShip = new MusicChaneOwnerShip();
+      this.musicChaneOwnerShip.id = this.musicId;
+      this.musicChaneOwnerShip.ownerId = Number.parseInt(infoMusic.split("_")[1]);
+      this.musicChaneOwnerShip.musicLink = this.musicInfoUpdatefullKeyNew.musicLink;
+      this.http.post(this.rootUrl + '/Music/UpdateChangeOwnerShipAsync', this.musicChaneOwnerShip)
+      .subscribe(
+        res=>{
+          this.updateMusicInfoCheck = true;
+          this.toastr.success("Cập nhật nhạc số thành công", "Success", {
+            positionClass: "toast-top-right",
+            timeOut: 2000
+          });
+        });
+    }
   }
 
   createNewKey()
@@ -184,4 +242,10 @@ export class AssetUpdate {
   blobName: string;
   old_password: string;
   new_password: string;
+}
+
+export class MusicChaneOwnerShip {
+  id: String;
+  ownerId: Number;
+  musicLink: String;
 }
