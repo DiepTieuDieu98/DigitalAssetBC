@@ -4,8 +4,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { ToastrService } from "ngx-toastr";
 export const UserID = 'UserID';
-export const licenceType = 'licenceType';
-export const durationType = 'durationType';
 @Component({
   selector: 'app-user-buyer-item',
   templateUrl: './user-buyer-item.component.html',
@@ -15,6 +13,13 @@ export class UserBuyerItemComponent implements OnInit {
   readonly rootUrl = "https://localhost:5001/api";
   public user: User;
   public transac: Transaction;
+  public userList: User[];
+  public ownerAddress: string;
+  public licenceType: string;
+  public durationType: string;
+  public buyerId: Number;
+  public createProgressCheck: boolean;
+  public key2: string;
   constructor(private http:HttpClient,
     private route: ActivatedRoute,
     private router: Router,
@@ -22,82 +27,58 @@ export class UserBuyerItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUserInfo();
+    this.getUserList();
+    this.getMusicInfo();
   }
 
 
+  getUserList(){
+    return this.http.get(this.rootUrl + '/User').toPromise().then(res => this.userList = res as User[]);
+  }
+
+  getMusicInfo(){
+    const musicId = this.route.snapshot.paramMap.get('id');
+    this.http.get(this.rootUrl + '/Music/GetMusicWithId/'+musicId)
+    .subscribe(
+      res=>{
+        this.key2 = res['key2'];
+      });
+  }
+
+  buyerChange(value: any)
+  {
+    this.buyerId = value;
+    this.http.get(this.rootUrl + '/User/GetUserInfo/'+value)
+    .subscribe(
+      res=>{
+        this.ownerAddress = res['ownerAddress'];
+      });
+  }
 
   licenceTypeChange(value: any)
   {
-    sessionStorage.setItem(licenceType, value);
-    // const musicId = this.route.snapshot.paramMap.get('id');
-    // console.log(sessionStorage.getItem(licenceType));
-    // console.log(musicId);
+    this.licenceType = value;
   }
 
   durationTypeChange(value: any)
   {
-    sessionStorage.setItem(durationType, value);
-    // console.log(sessionStorage.getItem(durationType));
-
+    this.durationType = value;
   }
 
   excuteTransact(transactInfo)
   {
     const musicId = this.route.snapshot.paramMap.get('id');
-    var licence_type = sessionStorage.getItem(licenceType);
-    var duration_type = sessionStorage.getItem(durationType);
+    var licence_type = this.licenceType;
+    var duration_type = this.durationType;
+    this.createProgressCheck = false;
     if (Number(licence_type) == 0)
     {
       this.transac = transactInfo;
+      this.transac.fromUserId = this.ownerAddress;
+      this.transac.toUserId = this.user.ownerAddress;
+      this.transac.buyerId = this.buyerId;
       this.transac.musicId = musicId;
       this.transac.tranType = "ForSale";
-      this.transac.duration = 0;
-      this.transac.amountValue = 1;
-      this.transac.isPermanent = true;
-
-      this.http.post(this.rootUrl + '/MusicAssetTransfersController/CreateTransferAsync', this.transac)
-      .subscribe(()=>{
-        this.toastr.success("Giao dịch thành công", "Success", {
-          positionClass: "toast-top-right",
-          timeOut: 3000
-        });
-          sessionStorage.removeItem('licenceType');
-          sessionStorage.removeItem('durationType');
-        setTimeout(() => 
-        {
-          this.router.navigate(['/music/user-seller/'+1]);
-        },
-        3000);
-      });
-      // console.log(this.transac);
-    }
-    else
-    {
-      this.transac = transactInfo;
-      this.transac.musicId = musicId;
-
-      switch(Number(licence_type)) { 
-        case 1: { 
-           this.transac.tranType = "Regeneration";
-           break; 
-        } 
-        case 2: { 
-          this.transac.tranType = "CopyProduct";
-           break; 
-        } 
-        case 3: { 
-          this.transac.tranType = "Distribution";
-          break; 
-        } 
-        case 4: { 
-          this.transac.tranType = "ForOnline";
-          break; 
-        } 
-        case 5: { 
-          this.transac.tranType = "ToRent";
-          break; 
-        }   
-      } 
 
       switch(Number(duration_type)) { 
         case 0: { 
@@ -125,17 +106,48 @@ export class UserBuyerItemComponent implements OnInit {
           break; 
         } 
       } 
+
       this.transac.amountValue = 1;
       this.transac.isPermanent = false;
+      this.transac.key2 = this.key2;
 
-      this.http.post(this.rootUrl + '/MusicAssetTransfersController/CreateLicenceTrans', this.transac)
+      this.http.post(this.rootUrl + '/MusicAssetTransfers/CreateTransferAsync', this.transac)
       .subscribe(()=>{
+        this.createProgressCheck = true;
         this.toastr.success("Giao dịch thành công", "Success", {
           positionClass: "toast-top-right",
           timeOut: 3000
         });
-          sessionStorage.removeItem('licenceType');
-          sessionStorage.removeItem('durationType');
+        setTimeout(() => 
+        {
+          this.router.navigate(['/music/user-seller/'+1]);
+        },
+        3000);
+      });
+      // console.log(this.transac);
+    }
+    else
+    {
+      this.transac = transactInfo;
+      this.transac.musicId = musicId;
+      this.transac.fromUserId = this.ownerAddress;
+      this.transac.toUserId = this.user.ownerAddress;
+      this.transac.buyerId = this.buyerId;
+      this.transac.tranType = "ForOwnerShip";
+
+      this.transac.duration = 0;
+
+      this.transac.amountValue = 1;
+      this.transac.isPermanent = true;
+      this.transac.key2 = this.key2;
+
+      this.http.post(this.rootUrl + '/MusicAssetTransfers/CreateLicenceTrans', this.transac)
+      .subscribe(()=>{
+        this.createProgressCheck = true;
+        this.toastr.success("Giao dịch thành công", "Success", {
+          positionClass: "toast-top-right",
+          timeOut: 3000
+        });
         setTimeout(() => 
         {
           this.router.navigate(['/music/user-seller/'+1]);
@@ -146,7 +158,7 @@ export class UserBuyerItemComponent implements OnInit {
   }
 
   getUserInfo(){
-    const userID = sessionStorage.getItem(UserID);
+    const userID = localStorage.getItem(UserID);
     this.http.get(this.rootUrl + '/User/GetUserInfo/'+userID)
     .subscribe(
       res=>{
@@ -165,7 +177,6 @@ export class User {
   ownerAddress: String;
 }
 
-
 export class Transaction {
   musicId: String;
   fromUserId: String;
@@ -175,4 +186,6 @@ export class Transaction {
   duration: Number;
   amountValue: Number;
   isPermanent: boolean;
+  buyerId: Number;
+  key2: string;
 }
