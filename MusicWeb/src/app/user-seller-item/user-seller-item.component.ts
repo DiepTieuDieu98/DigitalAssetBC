@@ -4,7 +4,6 @@ import { MusicItem } from '../shared/music-item.model';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { ToastrService } from "ngx-toastr";
-export const approveType = 'approveType';
 
 @Component({
   selector: 'app-user-seller-item',
@@ -15,7 +14,11 @@ export class UserSellerItemComponent implements OnInit {
   readonly rootUrl = "https://localhost:5001/api";
   public musicTransact: MusicTransaction[];
   public licenceMusicTransact: MusicTransaction[];
-  public approveMusicTransact: TransactionGet[];
+  public approveLicenceTransact: ApproveLicenceTransact;
+  public dateStart: Number;
+  public dateEnd: Number;
+  public amountValue: String;
+  public approveType: String;
 
   constructor(private http:HttpClient,
     private route: ActivatedRoute,
@@ -40,6 +43,11 @@ export class UserSellerItemComponent implements OnInit {
           {
             this.musicTransact[i].transactionHash = this.musicTransact[i].transactionHash.substring(0, 25)+'...';
           }
+          this.http.get(this.rootUrl + '/User/GetUserInfo/'+ this.musicTransact[i].buyerId)
+          .subscribe(
+            res=>{
+              this.musicTransact[i].buyerName = res["firstName"] + "_" + res["lastName"];
+            });
         }
         
       });
@@ -58,29 +66,37 @@ export class UserSellerItemComponent implements OnInit {
           {
             this.licenceMusicTransact[i].transactionHash = this.licenceMusicTransact[i].transactionHash.substring(0, 25)+'...';
           }
+          this.http.get(this.rootUrl + '/User/GetUserInfo/'+ this.licenceMusicTransact[i].buyerId)
+          .subscribe(
+            res=>{
+              this.licenceMusicTransact[i].buyerName = res["firstName"] + "_" + res["lastName"];
+            });
         }
       });
   }
 
   aprroveTypeChange(value: any)
   {
-    sessionStorage.setItem(approveType, value);
-    // console.log(value);
+    this.approveType = value;
+    this.http.get(this.rootUrl + '/MusicAssetTransfers/GetTransfer/'+value)
+    .subscribe(
+      res=>{
+        this.dateStart = res["dateStart"] * 1000;
+        this.dateEnd = res["dateEnd"] * 1000;
+        this.amountValue = res["amountValue"];
+      });
   }
 
   approveTransaction()
   {
-    const musicAssetTranferId = sessionStorage.getItem(approveType);
-    this.http.get(this.rootUrl + '/MusicAssetTransfers/'+musicAssetTranferId)
+    const musicAssetTranferId = this.approveType;
+    this.http.get(this.rootUrl + '/MusicAssetTransfers/GetTransfer/'+musicAssetTranferId)
     .subscribe(
       res=>{
-        this.approveMusicTransact = res as TransactionGet[];
-        this.approveMusicTransact['fromUserId'] = this.approveMusicTransact['fromId'];
-        this.approveMusicTransact['toUserId'] = this.approveMusicTransact['toId'];
-        this.approveMusicTransact['duration'] = 0;
-        // console.log(this.approveMusicTransact);
-
-        this.http.put(this.rootUrl + '/MusicAssetTransfers/'+musicAssetTranferId, this.approveMusicTransact)
+        this.approveLicenceTransact = new ApproveLicenceTransact();
+        this.approveLicenceTransact.id = musicAssetTranferId;
+        this.approveLicenceTransact.musicId = res["musicId"];
+        this.http.post(this.rootUrl + '/MusicAssetTransfers/UpdateLicenceTransAsync',  this.approveLicenceTransact)
         .subscribe(()=>{
           this.toastr.success("Giao dịch bản quyền thành công", "Success", {
             positionClass: "toast-top-right",
@@ -94,7 +110,6 @@ export class UserSellerItemComponent implements OnInit {
         });
       });
   }
-
 
 }
 
@@ -113,16 +128,11 @@ export class MusicTransaction {
   dateCreated: String;
   amountValue: Number;
   isConfirmed: boolean;
+  
+  buyerName: String;
 }
 
-
-export class TransactionGet {
+export class ApproveLicenceTransact {
+  id: String;
   musicId: String;
-  fromUserId: String;
-  toUserId: String;
-  tranType: String;
-  fanType: String;
-  duration: Number;
-  amountValue: Number;
-  isPermanent: boolean;
 }

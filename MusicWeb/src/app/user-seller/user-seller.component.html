@@ -21,8 +21,7 @@
                     </div>
                     <!-- Button trigger modal -->
                     <div style="flex: 0.12;">
-                        <img src="../../assets/add.png" alt="" class="btn" style="width: 109%; cursor: pointer;" data-toggle="modal" data-target="#ownerAddr" (click)="loadAddrInfo()">
-                        
+                        <img src="../../assets/add.png" alt="" class="btn" style="width: 109%; cursor: pointer;" data-toggle="modal" data-target="#ownerAddr" (click)="loadOwnerInfo()">
                     </div >
                 </div>
                 <div class="detail_info" style="margin-left: 5%; display: block;">
@@ -44,11 +43,11 @@
 
                 <!-- Modal -->
                 <div class="modal fade" id="ownerAddr" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <form class="form-style-12" #ownerAddrPost="ngForm" autocomplete="off" (ngSubmit)="updateOwnerAddr(ownerAddrPost.value)">
+                    <form class="form-style-12" #ownerAddrPost="ngForm" autocomplete="off" (ngSubmit)="updateOwnerInfo(ownerAddrPost.value)">
                         <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
+                            <div class="modal-content" style="margin-top: 40%;">
                                 <div class="modal-header">
-                                    <h6 class="modal-title" id="exampleModalLongTitle" style="color: black;">Owner Address</h6>
+                                    <h6 class="modal-title" id="exampleModalLongTitle" style="color: black;">Owner Info</h6>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -66,19 +65,30 @@
                                                     <img src="../../assets/refresh.png" alt="" class="btn" style="width: 109%; cursor: pointer;" id="updateAddr">
                                                 </div>
                                             </div>
+                                            <br>
+                                            <label>Owner PrivateKey</label>
+                                            <div style="display: flex;">
+                                                <div style="flex: 0.9;">
+                                                    <input name="ownerPrivateKey" class="form-control" ngModel id="ownerPrKeyIdInput">
+                                                    <input name="ownerPrivateKey" class="form-control" value="{{ownerPrKey}}" id="ownerPrKeyId" disabled>
+                                                </div>
+                                                <div style="flex: 0.1;">
+                                                    <img src="../../assets/refresh.png" alt="" class="btn" style="width: 109%; cursor: pointer;" id="updatePrKey">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <input type="submit" class="btn btn-info" value="Lưu">
+                                    <input type="submit" class="btn btn-info" value="Xác nhận">
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
                 
-                <div class="detail_info" style="margin-left: 20%; display: block; border: none;">
-                    <a href="/users/User/Logout" class="btn btn-danger" style="margin-right: 4px;">Đăng xuất</a>
+                <div class="detail_info" style="margin-left: 23%; display: block; border: none; margin-top: 70px;">
+                    <a href="#" class="btn btn-danger" (click)="logOut()" style="margin-right: 17px;">Đăng xuất</a>
                     <a href="http://localhost:4200/music/statistic" class="btn btn-success">Trở về trang chủ</a>
                 </div>
             </div>
@@ -110,7 +120,11 @@
                         <h6>Tên tài sản: <label style="color: #ff2f8e;">{{item.name}}</label> <label style="color: gray; font-size: 15px; float: right;
                             margin-right: 24%;">(Album Gốc: {{item.album}})</label></h6> 
                         <h6>Chủ sở hữu: <label style="color: #ff2f8e;">{{item.ownerType}}</label></h6>
-                        <h6 *ngIf="item.key1 != null">Khóa 1: <label style="color: #ff2f8e;">{{item.key1}}</label></h6>
+                        <h6 *ngIf="userTypeCheck == 'buyer' && item.isPermanent == false">Khóa 1: <label style="color: #ff2f8e;">{{item.key1}}</label></h6>
+                        <h6 *ngIf="userTypeCheck == 'buyer' && item.isPermanent == true && item.isConfirmed == false">Khóa 1: <label style="color: #ff2f8e;">{{item.key1}}</label></h6>
+                        <h6 *ngIf="userTypeCheck == 'buyer' && item.isPermanent == true && item.isConfirmed == true">Khóa đầy đủ: <label style="color: #ff2f8e;">{{item.fullKey}}</label></h6>
+                        <h6 *ngIf="userTypeCheck == 'seller'">Khóa đầy đủ: <label style="color: #ff2f8e;">{{item.fullKey}}</label></h6>
+                        <img src="../../assets/share.png" alt="" class="btn" style="width: 78px; height: 66px; cursor: pointer; position: absolute; right: -2px; bottom: 69px;" data-toggle="modal" data-target="#shareOwnerShip" (click)="loadMusicId(item.id)">
                     </div>
                     
                     <hr>
@@ -118,18 +132,46 @@
                         <label>Trạng thái: {{item.transactionStatus}}</label>
                         
                         <a href="/music/user-seller-item/{{item.id}}" *ngIf="userTypeCheck == 'seller'">View</a>
-                        <a href="/music/check-key/{{item.id}}_{{item.key1}}_{{item.musicLink}}_{{item.mediaLink}}" *ngIf="userTypeCheck == 'buyer' && item.mediaLink != ''">View</a>
-                        <a href="/music/check-key/{{item.id}}_{{item.key1}}_{{item.musicLink}}" *ngIf="userTypeCheck == 'buyer' && item.mediaLink == ''">View</a>
+                        <a href="/music/check-key/{{item.id}}_{{item.key1}}_{{item.musicLink}}_{{item.transferId}}_{{item.mediaLink}}" *ngIf="userTypeCheck == 'buyer' && item.mediaLink != ''">View</a>
+                        <a href="/music/check-key/{{item.id}}_{{item.key1}}_{{item.musicLink}}_{{item.transferId}}" *ngIf="userTypeCheck == 'buyer' && item.mediaLink == ''">View</a>
                         <a href="/music/ownership/{{item.id}}_0" *ngIf="userTypeCheck == 'seller'" style="position: absolute; bottom: 11px; right: 96px;">OwnerShip</a>
                     </div>
                 </div>
             </div>
-            <div>
+            <div *ngIf="totalRecords != 0" style="margin-left: 4%;">
                 <pagination-controls maxSize="5" directionLinks="true"  (pageChange)="page = $event"></pagination-controls>
             </div>
         </div>
 
-        
+        <!-- Modal -->
+        <div class="modal fade" id="shareOwnerShip" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <form class="form-style-12" #ownerShipSharingPost="ngForm" autocomplete="off" (ngSubmit)="shareOwnerShip(ownerShipSharingPost.value)">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content" style="margin-top: 40%;">
+                        <div class="modal-header">
+                            <h6 class="modal-title" id="exampleModalLongTitle" style="color: black;">Chia sẻ quyền sở hữu</h6>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Người thừa hưởng</label>
+                                    <select class="form-control" name="userId" id="ownerShipUser" ngModel>
+                                        <option disabled value="">Select Inherit User</option>
+                                        <option *ngFor="let item of userList" value="{{item.userID}}">{{item.firstName}} {{item.lastName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-info" value="Xác nhận">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </section>
 

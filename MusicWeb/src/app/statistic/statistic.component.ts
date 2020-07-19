@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { MusicItem } from '../shared/music-item.model';
 import { MusicService } from '../shared/music.service';
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: 'app-statistic',
@@ -18,12 +20,37 @@ export class StatisticComponent implements OnInit {
   trasactModel: TrasactModel = new TrasactModel();
   items = [];
   public musicItemList: MusicItem[];
+  public userID = localStorage.getItem("UserID");
   constructor(private http:HttpClient,
-    public service: MusicService) { }
+    public service: MusicService,
+    private router: Router,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getLatestBlock();
     this.service.getMusicList().then(res => this.musicItemList = res as MusicItem[]);
+  }
+
+  searchOwnerShip(searchInfo)
+  {
+    this.toastr.warning("Đang tìm kiếm thông tin ...", "Warning", {
+      positionClass: "toast-top-right",
+      timeOut: 3000
+    });
+    setTimeout(() => 
+    {
+      this.toastr.success("Tìm kiếm thành công, đang chuyển trang...", "Success", {
+        positionClass: "toast-top-right",
+        timeOut: 3000
+      });
+    },
+    3000);
+    
+    setTimeout(() => 
+    {
+      this.router.navigate(['/music/origin-music/'+searchInfo["searchHash"]]);
+    },
+    6000);
   }
 
   getLatestBlock()

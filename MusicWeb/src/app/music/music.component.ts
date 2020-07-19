@@ -5,10 +5,7 @@ import { MusicItem } from '../shared/music-item.model';
 import { Music } from '../shared/music.model';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from "ngx-toastr";
-export const licenceLink = 'licenceLink';
-export const musicLink = 'musicLink';
-export const demoLink = 'demoLink';
-export const mediaLink = 'mediaLink';
+import { Router } from '@angular/router';
 export const musicType = 'musicType';
 export const UserID = 'UserID';
 
@@ -28,26 +25,33 @@ export class MusicComponent implements OnInit {
   music: Music = new Music();
   selectedLicence: File = null;
   selectedMusic: File = null;
+  selectedMusicEnUp: File = null;
   selectedMusicDemo: File = null;
-  public userID = sessionStorage.getItem(UserID);
-  public hashedMessageKey1: String;
-  public signatureKey1: String;
+  public userID = localStorage.getItem(UserID);
+  public hashedMessageKey1: string;
+  public signatureKey1: string;
   public keyType: Number;
   public checkSign: boolean;
   public checkSignServer: boolean;
   public openFormKey2: boolean;
-  public pValue: String;
-  public fullKey1X: String;
+  public pValue: string;
+  public fullKey1X: string;
   public fullKey: string;
   public key2: string;
-  public hashedMessageKeyServer: String;
-  public signatureKeyServer: String;
+  public hashedMessageKeyServer: string;
+  public signatureKeyServer: string;
   public openFormUploadMusic: boolean;
   public openFormAddMusic: boolean;
+  public createProgressCheck: boolean;
+
+  public licenceLink: string;
+  public musicLink: string;
+  public demoLink: string;
   
   constructor(public service: MusicService,
     private http:HttpClient,
-    private toastr: ToastrService) { 
+    private toastr: ToastrService,
+    private router: Router) { 
       this.openFormKey2 = false;
       this.openFormAddMusic = false;
       this.openFormUploadMusic = false;
@@ -111,6 +115,11 @@ export class MusicComponent implements OnInit {
 
   musicAssetChange(event)
   {
+    this.selectedMusicEnUp = <File>event.target.files[0];
+  }
+
+  musicAssetEncryptChange(event)
+  {
     this.selectedMusic = <File>event.target.files[0];
   }
 
@@ -121,8 +130,8 @@ export class MusicComponent implements OnInit {
 
   musicTypeChange(value: any)
   {
-    sessionStorage.setItem(musicType, value);
-    // console.log(sessionStorage.getItem(musicType));
+    localStorage.setItem(musicType, value);
+    // console.log(localStorage.getItem(musicType));
   }
 
   addKey1(keyInfoForm)
@@ -186,7 +195,7 @@ export class MusicComponent implements OnInit {
 
   encryptMusic()
   {
-    var music = sessionStorage.getItem(musicType);
+    var music = localStorage.getItem(musicType);
     if (Number(music) == 0)
     {
       const musicAsset = new FormData();
@@ -247,41 +256,45 @@ export class MusicComponent implements OnInit {
     // this.service.addMusicService(musicInfo);
     // console.warn(musicInfo);
 
+    this.service.formData = musicInfo;
     const licence = new FormData();
     licence.append('myFile', this.selectedLicence, this.selectedLicence.name);
     this.http.post(this.rootUrl + '/UploadMusicAsset/licence', licence)
     .subscribe(res=>{
-      sessionStorage.setItem(licenceLink, res['licenceLink']);
-      // console.warn(res);
+      this.licenceLink = res['licenceLink'];
+      this.service.formData.licenceLink = this.licenceLink;
     });
 
-    var music = sessionStorage.getItem(musicType);
+    var music = localStorage.getItem(musicType);
 
     if (Number(music) == 0)
     {
       const musicAsset = new FormData();
-      musicAsset.append('myFile', this.selectedMusic, this.selectedMusic.name);
+      musicAsset.append('myFile', this.selectedMusicEnUp, this.selectedMusicEnUp.name);
       this.http.post(this.rootUrl + '/UploadMusicAsset/lyrics', musicAsset)
       .subscribe(res=>{
-        sessionStorage.setItem(musicLink, res['lyricsLink']);
+        this.musicLink = res['lyricsLink'];
+        this.service.formData.musicLink = this.musicLink;
       });
     }
     else if (Number(music) == 1)
     {
       const musicAsset = new FormData();
-      musicAsset.append('myFile', this.selectedMusic, this.selectedMusic.name);
+      musicAsset.append('myFile', this.selectedMusicEnUp, this.selectedMusicEnUp.name);
       this.http.post(this.rootUrl + '/UploadMusicAsset/audio', musicAsset)
       .subscribe(res=>{
-        sessionStorage.setItem(musicLink, res['audioLink']);
+        this.musicLink = res['audioLink'];
+        this.service.formData.musicLink = this.musicLink;
       });
     }
     else if (Number(music) == 2)
     {
       const musicAsset = new FormData();
-      musicAsset.append('myFile', this.selectedMusic, this.selectedMusic.name);
+      musicAsset.append('myFile', this.selectedMusicEnUp, this.selectedMusicEnUp.name);
       this.http.post(this.rootUrl + '/UploadMusicAsset/video', musicAsset)
       .subscribe(res=>{
-        sessionStorage.setItem(musicLink, res['videoLink']);
+        this.musicLink = res['videoLink'];
+        this.service.formData.musicLink = this.musicLink;
       });
     }
 
@@ -291,7 +304,8 @@ export class MusicComponent implements OnInit {
       musicAsset.append('myFile', this.selectedMusicDemo, this.selectedMusicDemo.name);
       this.http.post(this.rootUrl + '/UploadMusicAsset/audio', musicAsset)
       .subscribe(res=>{
-        sessionStorage.setItem(demoLink, res['audioLink']);
+        this.demoLink = res['audioLink'];
+        this.service.formData.demoLink = this.demoLink;
       });
     }
     else if (Number(music) == 2)
@@ -300,29 +314,33 @@ export class MusicComponent implements OnInit {
       musicAsset.append('myFile', this.selectedMusicDemo, this.selectedMusicDemo.name);
       this.http.post(this.rootUrl + '/UploadMusicAsset/video', musicAsset)
       .subscribe(res=>{
-        sessionStorage.setItem(demoLink, res['videoLink']);
+        this.demoLink = res['videoLink'];
+        this.service.formData.demoLink = this.demoLink;
       });
     }
-
-    // const musicAsset = new FormData();
-    // musicAsset.append('myFile', this.selectedMusicDemo, this.selectedMusicDemo.name);
-    // this.http.post(this.rootUrl + '/UploadMusicAsset/MediaTest', musicAsset)
-    // .subscribe(res=>{
-    //   sessionStorage.setItem(mediaLink, res['url']);
-    // });
-    
-    this.service.formData = musicInfo;
-    this.service.formData.licenceLink = sessionStorage.getItem(licenceLink);
-    this.service.formData.musicLink = sessionStorage.getItem(musicLink);
-    this.service.formData.demoLink = sessionStorage.getItem(demoLink);
-
+   
     this.service.formData.key1 = this.fullKey1X;
     this.service.formData.key2 = this.key2;
     this.service.formData.fullKey = this.fullKey;
-
-    // this.service.formData.mediaLink = sessionStorage.getItem(mediaLink);
-    this.service.addMusicService(this.service.formData);
-    // console.log(this.service.formData);
+    this.createProgressCheck = false;
+    
+    setTimeout(() => 
+    {
+      this.http.post(this.rootUrl + '/Music', this.service.formData)
+      .subscribe(()=>{
+        this.toastr.success("Thêm nhạc số thành công", "Success", {
+          positionClass: "toast-top-right",
+          timeOut: 4000
+        });
+          this.createProgressCheck = true;
+        setTimeout(() => 
+        {
+          this.router.navigate(['/music/user-seller/'+this.userID]);
+        },
+        4000);
+      });
+    },
+    25000);
   }
 
   getUserList(){
@@ -342,9 +360,9 @@ export class MusicComponent implements OnInit {
 
 
 export class User {
-  userID: String;
-  firstName: String;
-  lastName: String;
+  userID: string;
+  firstName: string;
+  lastName: string;
 }
 
 export class Key1 {
@@ -354,15 +372,15 @@ export class Key1 {
 }
 
 export class Key2 {
-  pValue: String;
-  fullKey1X: String;
+  pValue: string;
+  fullKey1X: string;
   key2X: Number;
   keyType: Number;
 }
 
 export class VerifySign {
-  hashedMessage: String;
-  signature: String;
+  hashedMessage: string;
+  signature: string;
   keyType: Number;
   userID: Number;
 }

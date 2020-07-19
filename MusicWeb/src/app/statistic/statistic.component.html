@@ -1,15 +1,13 @@
 <div class="space-100"></div>
 <div class="container">
-    <form class="form-style-12">
+    <form class="form-style-12" #ownerShipSearchPost="ngForm" autocomplete="off" (ngSubmit)="searchOwnerShip(ownerShipSearchPost.value)">
         <ul>
             <li>
-                <select class="form-control" id="sel1" style="flex: 0.15; border-radius: 0;">
-                    <option>All Filters</option>
-                    <option>Tokens</option>
-                    <option>Addresses</option>
-                    <option>Asset Hash</option>
+                <select class="form-control" id="searchOption"  style="flex: 0.2; border-radius: 0;">
+                    <option disabled value="">All Filters</option>
+                    <option>Transaction Hash</option>
                 </select>
-                <input type="email" name="field2" class="field-style field-split align-right" placeholder="Search by Token / Address / Asset Hash " style="flex: 1;"/>
+                <input type="text" name="searchHash" ngModel class="field-style field-split align-right" placeholder="Search by Transaction Hash " style="flex: 1;"/>
             </li>
             <li>
                 <input type="submit" value="Send Message" />
@@ -31,13 +29,6 @@
             </tr>
         </thead>
         <tbody>
-            <!-- <tr>
-                <td>{{convert.blockNumber}}</td>
-                <td>{{totalTransact}}</td>
-                <td>6369</td>
-                <td>01:32:50</td>
-                <td>01:32:50</td>
-            </tr> -->
             <tr *ngFor="let item of items">
                 <td><a href="https://ropsten.etherscan.io/tx/{{item.txIdFull}}">{{item.txId}}</a></td>
                 <td><span class="btn btn-info">Transfer</span></td>
@@ -55,13 +46,13 @@
 <div class="music-blk container">
     <div class="blk-front">
         <div class="blk-Buy">
-            <a href=""><h3 class="btn btn-danger text-white">Buy Now!</h3></a>
+            <a href="/music/user-buyer"><h3 class="btn btn-danger text-white">Buy Now!</h3></a>
         </div>
         <div class="blk-Intro">
             <h1>Music Asset List</h1>  
         </div>
-        <div class="blk-Sell">
-            <a href="http://localhost/hdwallets/AssetCopyRight/AssetCopyRight.php"><h3 class="btn btn-info text-white">Sell Music</h3></a>
+        <div class="blk-Sell" *ngIf="userID">
+            <a href="http://localhost:8080/hdwallets/AssetCopyRight/AssetCopyRight.php"><h3 class="btn btn-info text-white">Sell Music</h3></a>
         </div>
     </div> 
     <table class="blk-table">
@@ -72,7 +63,6 @@
                 <th>Album</th>
                 <th>Publishing Year</th>
                 <th>Owner Id</th>
-                <!-- <th>Licence Id</th> -->
                 <th>Creature Type</th>
                 <th>Owner Type</th>
             </tr>
@@ -84,7 +74,6 @@
                 <td>{{item.album}}</td>    
                 <td>{{item.publishingYear}}</td>
                 <td>{{item.ownerId}}</td>
-                <!-- <td>{{item.licenceId}}</td> -->
                 <td>{{item.creatureType}}</td>
                 <td>{{item.ownerType}}</td>
             </tr>

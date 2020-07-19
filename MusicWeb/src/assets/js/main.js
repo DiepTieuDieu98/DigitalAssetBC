@@ -266,11 +266,12 @@
     var typeLicence = $(this).val();
     if (parseInt(typeLicence, 0) == 0)
     {
-      $('#typeDuration option:nth-child(2)').prop('selected', true);
+      $('#typeDuration option:nth-child(3)').prop('selected', true);
       $('#typeDuration').prop('disabled', true);
 
-      $('#duration option:nth-child(8)').prop('selected', true);
-      $('#duration').prop('disabled', true);
+      $('#duration option:nth-child(1)').prop('selected', true);
+      $('#duration').prop('disabled', false);
+      $('#duration option:nth-child(8)').prop('disabled', true);
 
       $('#reason').css('display', 'none');
 
@@ -279,12 +280,11 @@
     }
     else
     {
-      $('#typeDuration option:nth-child(3)').prop('selected', true);
+      $('#typeDuration option:nth-child(2)').prop('selected', true);
       $('#typeDuration').prop('disabled', true);
 
-      $('#duration option:nth-child(1)').prop('selected', true);
-      $('#duration').prop('disabled', false);
-      $('#duration option:nth-child(8)').prop('disabled', true);
+      $('#duration option:nth-child(8)').prop('selected', true);
+      $('#duration').prop('disabled', true);
 
       $('#reason').css('display', 'block');
 
@@ -305,6 +305,13 @@
     
     $('#ownerAddrId').css('display','none');
     $('#ownerAddrIdInput').css('display','block');
+    
+  });
+
+  $(document).on('click', '#updatePrKey', function(e) {
+    
+    $('#ownerPrKeyId').css('display','none');
+    $('#ownerPrKeyIdInput').css('display','block');
     
   });
 

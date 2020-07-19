@@ -14,21 +14,42 @@ export const UserTypeCheck = 'UserTypeCheck';
 export class UserSellerComponent implements OnInit {
   readonly rootUrl = "https://localhost:5001/api";
   public user: User;
-  public ownerAddrInfo: OwnerAddrInfo;
+  public ownerInfo: OwnerInfo;
+  public ownerShipInfo: OwnerShipInfo;
   public musicItemList: MusicItem[];
+  public musicShareOwnerShipList: MusicItem[];
   public ownerAddr: String;
+  public ownerPrKey: String;
   public userTypeCheck : String;
   public totalRecords: number;
   public page: number = 1;
+  public userList: User[];
+  public musicId: String;
   constructor(private http:HttpClient,
     private route: ActivatedRoute,
     private router: Router,
     private toastr: ToastrService) { }
 
   ngOnInit(): void {
-    this.getUserInfo();
-    this.getMusicListDefault();
-    this.loadAddrInfo();
+    const userID = this.route.snapshot.paramMap.get('id');
+    const userIDLogin = localStorage.getItem("UserID");
+    if (Number.parseInt(userIDLogin) == Number.parseInt(userID))
+    {
+      this.getUserInfo();
+      this.getMusicListDefault();
+      this.loadOwnerInfo();
+      this.getUserList();
+    }
+  }
+
+  logOut()
+  {
+    localStorage.removeItem("UserID");
+    setTimeout(() => 
+          {
+            this.router.navigate(['/music/statistic']);
+          },
+          2000);
   }
 
   getUserInfo(){
@@ -36,34 +57,113 @@ export class UserSellerComponent implements OnInit {
     this.http.get(this.rootUrl + '/User/GetUserInfo/'+userID).toPromise().then(res => this.user = res as User);
   }
 
-  loadAddrInfo(){
+  loadOwnerInfo(){
     const userID = this.route.snapshot.paramMap.get('id');
-    this.http.get(this.rootUrl + '/UserAuth/GetOwnerAddress/'+userID)
+    this.http.get(this.rootUrl + '/UserAuth/GetOwnerInfo/'+userID)
     .subscribe(res =>{
-      sessionStorage.setItem('ownerAddress', res['ownerAddress']);
-    });
-    this.ownerAddr = sessionStorage['ownerAddress'];
-    
+      this.ownerAddr = res['ownerAddress'];
+      this.ownerPrKey = res['ownerPrivateKey'];
+    });    
   }
 
-  updateOwnerAddr(ownerInfo)
+  loadMusicId(value)
   {
-    this.ownerAddrInfo = ownerInfo;
+    this.musicId = value;
+  }
+
+  shareOwnerShip(ownerShipInfo)
+  {
     const userID = this.route.snapshot.paramMap.get('id');
-    this.ownerAddrInfo.userID = Number(userID);
-    this.http.post(this.rootUrl + '/UserAuth/UpdateOwnerAddress', this.ownerAddrInfo)
-    .subscribe(res=>{
-        this.toastr.success("Cập nhật thành công", "Success", {
-          positionClass: "toast-top-right",
-          timeOut: 2000
-        });
-        setTimeout(() => 
+    this.ownerShipInfo = ownerShipInfo;
+    this.ownerShipInfo.musicId = this.musicId;
+    this.http.post(this.rootUrl + '/Music/CreateMusicOwnerShip', this.ownerShipInfo)
+      .subscribe(res=>{
+        if (res["checkExist"] == true)
         {
-          this.router.navigate(['/music/user-seller/'+userID]);
-        },
-        2000);
-    });
-    // console.log(this.ownerAddrInfo);
+          this.toastr.error("Bản quyền đã được chia sẻ cho account chỉ định", "Error", {
+            positionClass: "toast-top-right",
+            timeOut: 2000
+          });
+        }
+        else
+        {
+          this.toastr.success("Chia sẻ bản quyền thành công", "Success", {
+            positionClass: "toast-top-right",
+            timeOut: 2000
+          });
+        }
+      });
+  }
+
+  updateOwnerInfo(ownerInfo)
+  {
+    this.ownerInfo = ownerInfo;
+
+    if (this.ownerInfo.ownerAddress != "" && this.ownerInfo.ownerPrivateKey == "")
+    {
+      const userID = this.route.snapshot.paramMap.get('id');
+      this.ownerInfo.userID = Number(userID);
+      this.http.post(this.rootUrl + '/UserAuth/UpdateOwnerAddress', this.ownerInfo)
+      .subscribe(res=>{
+          this.toastr.success("Cập nhật Address thành công", "Success", {
+            positionClass: "toast-top-right",
+            timeOut: 2000
+          });
+          setTimeout(() => 
+          {
+            this.router.navigate(['/music/user-seller/'+userID]);
+          },
+          2000);
+      });
+    }
+    else if (this.ownerInfo.ownerAddress == "" && this.ownerInfo.ownerPrivateKey != "")
+    {
+      const userID = this.route.snapshot.paramMap.get('id');
+      this.ownerInfo.userID = Number(userID);
+      this.http.post(this.rootUrl + '/UserAuth/UpdateOwnerPrivateKey', this.ownerInfo)
+      .subscribe(res=>{
+          this.toastr.success("Cập nhật Private Key thành công", "Success", {
+            positionClass: "toast-top-right",
+            timeOut: 2000
+          });
+          setTimeout(() => 
+          {
+            this.router.navigate(['/music/user-seller/'+userID]);
+          },
+          2000);
+      });
+    }
+    else if (this.ownerInfo.ownerAddress != "" && this.ownerInfo.ownerPrivateKey != "")
+    {
+      const userID = this.route.snapshot.paramMap.get('id');
+      this.ownerInfo.userID = Number(userID);
+      this.http.post(this.rootUrl + '/UserAuth/UpdateOwnerAddress', this.ownerInfo)
+      .subscribe(res=>{
+         
+      });
+
+      this.ownerInfo.userID = Number(userID);
+      this.http.post(this.rootUrl + '/UserAuth/UpdateOwnerPrivateKey', this.ownerInfo)
+      .subscribe(res=>{
+          this.toastr.success("Cập nhật thành công", "Success", {
+            positionClass: "toast-top-right",
+            timeOut: 2000
+          });
+          setTimeout(() => 
+          {
+            this.router.navigate(['/music/user-seller/'+userID]);
+          },
+          2000);
+      });
+    }
+    else
+    {
+      this.toastr.error("Thông tin bị thiếu", "Error", {
+        positionClass: "toast-top-right",
+        timeOut: 2000
+      });
+    }
+    // console.log(this.ownerInfo);
   }
 
   SetUserType()
@@ -87,41 +187,66 @@ export class UserSellerComponent implements OnInit {
     this.getMusicList();
   }
 
+  getUserList(){
+    return this.http.get(this.rootUrl + '/User').toPromise().then(res => this.userList = res as User[]);
+  }
+
   getMusicList()
   {
     // console.log(this.userType);
     if (this.userTypeCheck == "seller")
     {
-      const userID = this.route.snapshot.paramMap.get('id');
+      const userID = this.route.snapshot.paramMap.get('id'); 
+    
       this.http.get(this.rootUrl + '/User/GetMusicAssetWithUser/'+userID)
       .subscribe(res =>{
         this.musicItemList = res as MusicItem[];
+        let count = 0;
+        var index;
         for(let i = 0; i < this.musicItemList.length; i++)
+        {
+          if (this.musicItemList[i].creatureType == "Lyrics")
           {
-            if (this.musicItemList[i].creatureType == "Lyrics")
-            {
-              this.musicItemList[i].lyricsCheck = true;
-            }
-            else if (this.musicItemList[i].creatureType == "Audio")
-            {
-              this.musicItemList[i].audioCheck = true;
-            }
-            else if (this.musicItemList[i].creatureType == "MV")
-            {
-              this.musicItemList[i].mvCheck = true;
-            }
-            if (res["key2"] != null)
-            {
-              this.musicItemList[i].key1 = res["key1"];
-            }
-            // if (this.musicItemList[i].mediaLink != "")
-            // {
-            //   this.musicItemList[i].mediaLink = btoa(this.musicItemList[i].mediaLink.toString());
-            // }
+            this.musicItemList[i].lyricsCheck = true;
           }
+          else if (this.musicItemList[i].creatureType == "Audio")
+          {
+            this.musicItemList[i].audioCheck = true;
+          }
+          else if (this.musicItemList[i].creatureType == "MV")
+          {
+            this.musicItemList[i].mvCheck = true;
+          }
+        }
+
+        this.http.get(this.rootUrl + '/Music/GetMusicShareOwnerShip/'+userID)
+        .subscribe(res =>{
+          this.musicShareOwnerShipList = res as MusicItem[];
+          for(let i = 0; i < this.musicShareOwnerShipList.length; i++)
+          {
+            if (this.musicShareOwnerShipList[i].creatureType == "Lyrics")
+            {
+              this.musicShareOwnerShipList[i].lyricsCheck = true;
+            }
+            else if (this.musicShareOwnerShipList[i].creatureType == "Audio")
+            {
+              this.musicShareOwnerShipList[i].audioCheck = true;
+            }
+            else if (this.musicShareOwnerShipList[i].creatureType == "MV")
+            {
+              this.musicShareOwnerShipList[i].mvCheck = true;
+            }
+            
+            if(this.musicItemList.find(item => item.id == this.musicShareOwnerShipList[i].id) === undefined)
+            {
+              this.musicItemList.push(this.musicShareOwnerShipList[i]);
+            }
+          }
+
           this.totalRecords = this.musicItemList.length;
-        console.log(this.musicItemList);
-      });
+          // console.log(this.musicItemList)
+        });
+      }); 
     }
     else if (this.userTypeCheck == "buyer")
     {
@@ -143,7 +268,7 @@ export class UserSellerComponent implements OnInit {
             {
               this.musicItemList[i].mvCheck = true;
             }
-            this.musicItemList[i].musicLink = this.musicItemList[i].musicLink.substring(49);
+            this.musicItemList[i].musicLink = this.musicItemList[i].musicLink.split("//")[1].split("/")[2];
             if (this.musicItemList[i].mediaLink != "")
             {
               this.musicItemList[i].mediaLink = btoa(this.musicItemList[i].mediaLink.toString());
@@ -163,7 +288,13 @@ export class User {
   emailID: String; 
 }
 
-export class OwnerAddrInfo {
+export class OwnerInfo {
   userID: Number;
   ownerAddress: String;
+  ownerPrivateKey: String;
+}
+
+export class OwnerShipInfo {
+  musicId: String;
+  userId: Number;
 }

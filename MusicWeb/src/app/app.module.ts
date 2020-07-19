@@ -29,6 +29,7 @@ import { AudioComponent } from './audio/audio.component';
 import { VideoComponent } from './video/video.component';
 import { CheckKeyComponent } from './check-key/check-key.component';
 import { OwnershipComponent } from './ownership/ownership.component';
+import { OriginMusicComponent } from './origin-music/origin-music.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { OwnershipComponent } from './ownership/ownership.component';
     AudioComponent,
     VideoComponent,
     CheckKeyComponent,
-    OwnershipComponent
+    OwnershipComponent,
+    OriginMusicComponent
   ],
   imports: [
     BrowserModule,

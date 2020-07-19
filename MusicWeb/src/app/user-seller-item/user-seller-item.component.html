@@ -1,4 +1,4 @@
-<div class="limiter">
+<div class="limiter" style="background: #d1d1d1; padding-bottom: 93px;">
     <div class="container-table100">
         <div class="card">
             <div class="thumbnail"><img class="left" src="../../assets/music-img.jpg"/></div>
@@ -11,10 +11,12 @@
             <h6>JANUARY</h6>
             <div class="fab"><i class="fa fa-arrow-down fa-3x"> </i></div>
         </div>
-        
-        
+    </div>
+
+    <div class="container-fluid" style="margin: 0 auto;">
         <div class="table100 ver5 m-b-110">
             <h3 style="color: #1875d0;" class="text-center">Giao dịch mua bán</h3>
+            <br>
             <table data-vertable="ver5">
                 <thead>
                     <tr class="row100 head">
@@ -28,9 +30,9 @@
                 </thead>
                 <tbody>
                     <tr class="row100" *ngFor="let item of musicTransact">
-                        <td class="column100 column1" data-column="column1">Lawrence Scott</td>
-                        <td class="column100 column2" data-column="column2">{{item.tranType}}</td>
-                        <td class="column100 column3" data-column="column3">{{item.amountValue}}</td>
+                        <td class="column100 column1" data-column="column1">{{item.buyerName}}</td>
+                        <td class="column100 column2" data-column="column2">GD Thương Mại</td>
+                        <td class="column100 column3" data-column="column3">{{item.amountValue}} Ether</td>
                         <td class="column100 column4" data-column="column4">{{item.dateCreated |  date:'dd/MM/yyyy'}}</td>
                         <td class="column100 column5" data-column="column5">Success</td>
                         <a href="https://ropsten.etherscan.io/tx/{{item.transactionHashLink}}"><td class="column100 column6" data-column="column6">{{item.transactionHash}}</td></a>
@@ -41,6 +43,7 @@
 
         <div class="table100 ver5 m-b-110" style="margin-top: 50px;">
             <h3 style="color: #1875d0;" class="text-center">Giao dịch bản quyền</h3>
+            <br>
             <table data-vertable="ver5">
                 <thead>
                     <tr class="row100 head">
@@ -56,11 +59,12 @@
                 </thead>
                 <tbody>
                     <tr class="row100" *ngFor="let item of licenceMusicTransact">
-                        <td class="column100 column1" data-column="column1">Lawrence Scott</td>
-                        <td class="column100 column2" data-column="column2">{{item.tranType}}</td>
-                        <td class="column100 column3" data-column="column3">{{item.amountValue}}</td>
+                        <td class="column100 column1" data-column="column1">{{item.buyerName}}</td>
+                        <td class="column100 column2" data-column="column2">GD Bản Quyền</td>
+                        <td class="column100 column3" data-column="column3">{{item.amountValue}} Ether</td>
                         <td class="column100 column4" data-column="column4">{{item.dateCreated |  date:'dd/MM/yyyy'}}</td>
-                        <td class="column100 column5" data-column="column5">Pending</td>
+                        <td class="column100 column5" data-column="column5" *ngIf="item.isConfirmed == true">Success</td>
+                        <td class="column100 column5" data-column="column5" *ngIf="item.isConfirmed == false">Pending</td>
                         <a href="https://ropsten.etherscan.io/tx/{{item.transactionHashLink}}"><td class="column100 column6" data-column="column6">{{item.transactionHash}}</td></a>
                         <td class="column100 column6" *ngIf="item.isConfirmed == false" data-column="column6"><a href="#" class="tag" data-toggle="modal" data-target="#approveTransact" (click)="aprroveTypeChange(item.id)">Duyệt</a></td>
                         <td class="column100 column6" *ngIf="item.isConfirmed == true" data-column="column6">
@@ -99,17 +103,17 @@
                        <form action="">
                            <div>
                                <label>EVENT NAME</label>
-                               <input type="text" value="Dribbble Meetup" />
+                               <input type="text" value="Mua Bản Quyền" />
                            </div>
                            
                            <div class="short">
                                <label>START DATE</label>
-                               <input type="text" value="12:30 JAN 2015" />
+                               <input type="text" value="{{dateStart | date:'dd MMMM yyyy'}}" />
                            </div>
                            
                            <div class="short">
                                <label>START DATE</label>
-                               <input type="text" value="14:30 JAN 2015" />
+                               <input type="text" value="{{dateEnd | date:'dd MMMM yyyy'}}" />
                            </div>
                            
                            <button (click)="approveTransaction()" id="approveId">DUYỆT GIAO DỊCH</button>
@@ -166,19 +170,19 @@
                             <div class="dates">
                             <div class="start">
                                 <strong>STARTS</strong>
-                                12:30 JAN 2015
+                                {{dateStart | date:'dd MMMM yyyy'}}
                                 <span></span>
                             </div>
                             <div class="ends">
                                 <strong>ENDS</strong>
-                                14:30 JAN 2015
+                                {{dateEnd | date:'dd MMMM yyyy'}}
                             </div>
                             </div>
                         
                             <div class="stats">
                             <div>
-                                <strong>INVITED</strong>
-                                3098
+                                <strong>VALUE</strong>
+                                {{amountValue}} Ether
                             </div>
                             
                             <div>
