@@ -12,8 +12,8 @@ contract MusicAssetTransfer is Ownable {
     string public musicAssetId;
     string public fromOwnerId;
     string public toFanId;
+    string public key2;
     uint public quantity;
-    uint public dateTransferred;
     TransactType public tranType;
     FanType public fanType;
     bool public isPermanent;
@@ -26,8 +26,8 @@ contract MusicAssetTransfer is Ownable {
     }
     
     function addMusicAssetTransfer(
-        string[4] memory transactInfo,
-        uint[6] memory transacInfoInt,
+        string[5] memory transactInfo,
+        uint[4] memory transacInfoInt,
         bool[2] memory transactInfoCheck,
         address masterContractOwner)
         public
@@ -37,11 +37,11 @@ contract MusicAssetTransfer is Ownable {
         musicAssetId = transactInfo[1];
         fromOwnerId = transactInfo[2];
         toFanId = transactInfo[3];
-        dateTransferred = transacInfoInt[0];
-        tranType = TransactType(transacInfoInt[1]);
-        fanType = FanType(transacInfoInt[2]);
-        dateStart = transacInfoInt[3];
-        dateEnd = transacInfoInt[4];
+        key2 = transactInfo[4];
+        tranType = TransactType(transacInfoInt[0]);
+        fanType = FanType(transacInfoInt[1]);
+        dateStart = transacInfoInt[2];
+        dateEnd = transacInfoInt[3];
         isPermanent = transactInfoCheck[0];
         isConfirmed = transactInfoCheck[1];
 
@@ -53,7 +53,6 @@ contract MusicAssetTransfer is Ownable {
         string memory _fromOwnerId,
         string memory _toFanId,
         uint8 _fanType,
-        uint _dateTransferred,
         bool _isConfirmed)
         public
         onlyOwner
@@ -62,8 +61,6 @@ contract MusicAssetTransfer is Ownable {
         fromOwnerId = _fromOwnerId;
         toFanId = _toFanId;
         fanType = FanType(_fanType);
-        dateTransferred = _dateTransferred;
-
         isConfirmed = _isConfirmed;
     }
 
