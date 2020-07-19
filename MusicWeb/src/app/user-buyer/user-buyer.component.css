@@ -696,7 +696,9 @@ h2 a {
   }
   
   img {
-    width: 94%;
+	height: 82%;
+    width: 82%;
+    margin-top: 19px;
   }
 
   @import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css);
