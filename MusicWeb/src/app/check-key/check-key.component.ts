@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { ToastrService } from "ngx-toastr";
 import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
-
+export const UserID = 'UserID';
 @Component({
   selector: 'app-check-key',
   templateUrl: './check-key.component.html',
@@ -23,6 +23,10 @@ export class CheckKeyComponent implements OnInit {
   public fullKey: Number;
   public fullKeyCheck: boolean;
   public creatureType: Number;
+  public userID;
+  public key2: string;
+  public createMediaProgressCheck: boolean;
+  public transferId: String;
   constructor(private http:HttpClient,
     private route: ActivatedRoute,
     private router: Router,
@@ -43,9 +47,11 @@ export class CheckKeyComponent implements OnInit {
     // this.blobUpdate = new BlobUpdate();
     // this.blobUpdate.blobName = this.blobName;
     // this.blobUpdate.password = this.fullKey.toString();
+    this.createMediaProgressCheck = false;
     this.http.post(this.rootUrl + '/UploadMusicAsset/DownloadFileEncryptAndUploadMedia', blobUpdate)
       .subscribe(
         res=>{
+          this.createMediaProgressCheck = true;
           this.toastr.success("Mã hóa file thành công", "Success", {
             positionClass: "toast-top-right",
             timeOut: 2000
@@ -56,52 +62,77 @@ export class CheckKeyComponent implements OnInit {
   loadInfoSubmit(verifyInfo)
   {
     const infoId = this.route.snapshot.paramMap.get('id');
+    this.userID = localStorage.getItem(UserID);
     this.musicId = infoId.split("_")[0];
+    this.transferId = infoId.split("_")[3];
+
     this.http.get(this.rootUrl + '/Music/GetMusicWithId/'+this.musicId)
     .subscribe(
       res=>{
-        this.creatureType = res['creatureType'];
-        this.createKey = verifyInfo;
-        this.createKey.key1X = Number.parseFloat(verifyInfo['key1']);
-        this.createKey.key2X = Number.parseFloat(res['key2']);
-        this.http.post(this.rootUrl + '/Music/CreateFullKey', this.createKey)
-        .subscribe(
-          resNew=>{
-            this.fullKey = resNew['fullKey'];
-              // console.log(this.fullKey);
-              // console.log(res['fullKey']);
-            if (this.fullKey == res['fullKey'])
-            {
-                this.fullKeyCheck = true;
-                this.toastr.success("Tạo khóa bảo mật thành công", "Success", {
+        this.http.get(this.rootUrl + '/MusicAssetTransfers/'+ this.transferId +'/contract-address')
+        .subscribe(resSC =>{
+            this.key2 = resSC["key2"];
+            // console.log(this.key2);
+            const infoCheckExist = this.musicId+"_"+this.userID;
+          this.http.get(this.rootUrl + '/Music/CheckUserWithKeyExist/'+infoCheckExist)
+          .subscribe(
+            resExist=>{
+              if (resExist['existCheck'] == true)
+              {
+                this.creatureType = res['creatureType'];
+                this.createKey = verifyInfo;
+                this.createKey.key1X = Number.parseFloat(verifyInfo['key1']);
+                // this.createKey.key2X = Number.parseFloat(res['key2']);
+                this.createKey.key2X = Number.parseFloat(this.key2);
+                this.http.post(this.rootUrl + '/Music/CreateFullKey', this.createKey)
+                .subscribe(
+                  resNew=>{
+                    this.fullKey = resNew['fullKey'];
+                      // console.log(this.fullKey);
+                      // console.log(res['fullKey']);
+                    if (this.fullKey == res['fullKey'])
+                    {
+                        this.fullKeyCheck = true;
+                        this.toastr.success("Tạo khóa bảo mật thành công", "Success", {
+                          positionClass: "toast-top-right",
+                          timeOut: 2000
+                        });
+        
+                        if (this.creatureType == 3)
+                        {
+                          if (infoId.split("_")[4] != undefined)
+                          {
+                            this.mediaLink = "localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[4];
+                            this.mediaLinkTrust = this.sanitizer.bypassSecurityTrustUrl("http://localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[4]);
+                          }
+                        }
+                        else if (this.creatureType == 2)
+                        {
+                          this.musicLinkTrust = this.sanitizer.bypassSecurityTrustUrl("http://localhost:8080/hdwallets/Streaming/play_audio.php?token=" + btoa(res['musicLink'])); 
+                        }
+                        
+                    }
+                    else
+                    {
+                      this.fullKeyCheck = false;
+                      this.toastr.error("Khóa bảo mật không khớp", "Error", {
+                        positionClass: "toast-top-right",
+                        timeOut: 2000
+                      });
+                    }
+                      
+                  });
+              }
+              else
+              {
+                this.fullKeyCheck = false;
+                this.toastr.error("Tài sản không thuộc sở hữu của người dùng hiện tại", "Error", {
                   positionClass: "toast-top-right",
                   timeOut: 2000
                 });
-
-                if (this.creatureType == 3)
-                {
-                  if (infoId.split("_")[3] != undefined)
-                  {
-                    this.mediaLink = "localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[3];
-                    this.mediaLinkTrust = this.sanitizer.bypassSecurityTrustUrl("http://localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[3]);
-                  }
-                }
-                else if (this.creatureType == 2)
-                {
-                  this.musicLinkTrust = this.sanitizer.bypassSecurityTrustUrl("http://localhost:8080/hdwallets/Streaming/play_audio.php?token=" + btoa(res['musicLink'])); 
-                }
-                
-            }
-            else
-            {
-              this.fullKeyCheck = false;
-              this.toastr.error("Khóa bảo mật không khớp", "Error", {
-                positionClass: "toast-top-right",
-                timeOut: 2000
-              });
-            }
-              
+              }
           });
+        });
       });
   }
 
@@ -130,9 +161,9 @@ export class CheckKeyComponent implements OnInit {
                 positionClass: "toast-top-right",
                 timeOut: 2000
               });
-              this.mediaLink = "localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[3];
+              this.mediaLink = "localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[4];
             
-              this.mediaLinkTrust = this.sanitizer.bypassSecurityTrustUrl("http://localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[3]);
+              this.mediaLinkTrust = this.sanitizer.bypassSecurityTrustUrl("http://localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[4]);
             }
             else
             {
@@ -157,4 +188,3 @@ export class BlobUpdate {
   blobName: string;
   password: string;
 }
-
