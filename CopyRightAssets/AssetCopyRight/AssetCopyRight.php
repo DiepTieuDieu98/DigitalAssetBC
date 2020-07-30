@@ -154,7 +154,6 @@
 	    </article>
 	</div>
 	<?php 
-		define('ROOT', 'C:\xampp\htdocs\hdwallets');
 		require_once(ROOT. '/AssetCopyRight/Footer.php');
 	?>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

@@ -29,7 +29,7 @@
               </div>
           </div>
           <div class="col-4 col-lg-2 text-right">
-              <a href="#" class="logibtn gradient-btn">Đăng Nhập</a>
+              <a href="#"><img src="user.png" alt="" style="width: 47.05px; height: 47.2px;"></a>
           </div>
           
       </div>
