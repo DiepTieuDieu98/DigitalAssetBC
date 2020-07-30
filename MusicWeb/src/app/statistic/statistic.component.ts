@@ -29,28 +29,44 @@ export class StatisticComponent implements OnInit {
   ngOnInit(): void {
     this.getLatestBlock();
     this.service.getMusicList().then(res => this.musicItemList = res as MusicItem[]);
+    var refresh = window.localStorage.getItem('refresh');
+    // console.log(refresh);
+    if (refresh===null){
+        window.location.reload();
+        window.localStorage.setItem('refresh', "1");
+    }
   }
 
   searchOwnerShip(searchInfo)
   {
-    this.toastr.warning("Đang tìm kiếm thông tin ...", "Warning", {
-      positionClass: "toast-top-right",
-      timeOut: 3000
-    });
-    setTimeout(() => 
+    if (searchInfo["searchHash"] == "")
     {
-      this.toastr.success("Tìm kiếm thành công, đang chuyển trang...", "Success", {
+      this.toastr.error("Thông tin bị thiếu ...", "Error", {
         positionClass: "toast-top-right",
         timeOut: 3000
       });
-    },
-    3000);
-    
-    setTimeout(() => 
+    }
+    else
     {
-      this.router.navigate(['/music/origin-music/'+searchInfo["searchHash"]]);
-    },
-    6000);
+      this.toastr.warning("Đang tìm kiếm thông tin ...", "Warning", {
+        positionClass: "toast-top-right",
+        timeOut: 3000
+      });
+      setTimeout(() => 
+      {
+        this.toastr.success("Tìm kiếm thành công, đang chuyển trang...", "Success", {
+          positionClass: "toast-top-right",
+          timeOut: 3000
+        });
+      },
+      3300);
+      
+      setTimeout(() => 
+      {
+        this.router.navigate(['/music/origin-music/'+searchInfo["searchHash"]]);
+      },
+      6000);
+    }
   }
 
   getLatestBlock()

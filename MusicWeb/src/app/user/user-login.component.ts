@@ -21,6 +21,7 @@ export class UserLoginComponent implements OnInit {
     private toastr: ToastrService) { }
 
   ngOnInit(): void {
+    
   }
   
   login (loginData)
@@ -29,8 +30,9 @@ export class UserLoginComponent implements OnInit {
     this.http.post(this.rootUrl + '/UserAuth/Login', loginData)
     .subscribe(res =>{
       this.userID = res['userID'] as string;
-      localStorage.setItem(UserID, this.userID);
 
+      localStorage.setItem(UserID, this.userID);
+      
       this.userType = res['userType'] as Number;
       localStorage.setItem(UserType, this.userType.toString());
       console.log(localStorage['UserID']);

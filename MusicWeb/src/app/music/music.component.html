@@ -87,7 +87,7 @@
                 </div>
                 <div class="col-md-6" *ngIf="checkSign == true">
                     <div class="form-group">
-                        <button class="btn btn-warning text-white" (click)="activeFormKey2()">Thêm chữ kí 2</button>
+                        <button class="btn btn-warning text-white" (click)="activeFormKey2()" style="background-color: orange;">Thêm chữ kí 2</button>
                     </div>
                 </div>
             </li>
@@ -188,7 +188,7 @@
                 </div>
                 <div class="col-md-6" *ngIf="checkSignServer == true">
                     <div class="form-group">
-                        <button class="btn btn-warning text-white" (click)="activeFormUploadMusic()">Mã hóa nhạc số!</button>
+                        <button class="btn btn-warning text-white" (click)="activeFormUploadMusic()" style="background-color: orange;">Mã hóa nhạc số!</button>
                     </div>
                 </div>
             </li>
@@ -205,6 +205,7 @@
                     <div class="form-group">
                         <label for="encrypType">Loại mã hóa:</label>
                         <select class="form-control" name="encrypType" id="encrypType" ngModel>
+                            <option disabled value="">Select Encrypt Type</option>
                             <option value="0" selected>AES Encryption</option>
                         </select>
                     </div>
@@ -217,7 +218,7 @@
                     <div class="form-group">
                         <label for="musicType">Loại nhạc số:</label>
                         <select class="form-control" (change)="musicTypeChange($event.target.value)" name="musicType" id="musicType">
-                            <option disabled>Select Owner Type</option>
+                            <option disabled value="">Select Owner Type</option>
                             <option value="0">Lyrics</option>
                             <option value="1">Audio</option>
                             <option value="2">Video</option>
@@ -335,6 +336,7 @@
         </ul>
     </form>
 </div>
+<div class="space-100"></div>
 <div class="container">
     <div class="music-blk container">
         <h1>Music Asset List</h1>  
@@ -346,19 +348,17 @@
                     <th>Album</th>
                     <th>Publishing Year</th>
                     <th>Owner Id</th>
-                    <!-- <th>Licence Id</th> -->
                     <th>Creature Type</th>
                     <th>Owner Type</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of musicItemList">
+                <tr *ngFor="let item of musicItemList; let indexOfelement=index;">
                     <td>{{item.name}}</td>
-                    <td>{{item.title}}</td>
+                    <td>Title {{indexOfelement+1}}</td>
                     <td>{{item.album}}</td>    
                     <td>{{item.publishingYear}}</td>
                     <td>{{item.ownerId}}</td>
-                    <!-- <td>{{item.licenceId}}</td> -->
                     <td>{{item.creatureType}}</td>
                     <td>{{item.ownerType}}</td>
                 </tr>
@@ -366,3 +366,4 @@
         </table>  
     </div>
 </div>
+<div class="space-100"></div>

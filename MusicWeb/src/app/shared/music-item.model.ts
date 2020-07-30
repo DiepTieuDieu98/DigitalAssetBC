@@ -1,32 +1,32 @@
 import { AbstractFormGroupDirective } from '@angular/forms';
 
 export class MusicItem {
-    id: String;
-    name: String;
-    title: String;
-    album: String;
-    publishingYear: String;
+    id: string;
+    name: string;
+    title: string;
+    album: string;
+    publishingYear: string;
     ownerId: Number;
     licenceId: Number;
-    creatureType: String;
+    creatureType: string;
     lyricsCheck: boolean;
     audioCheck: boolean;
     mvCheck: boolean;
-    ownerType: String;
+    ownerType: string;
 
     isPermanent: boolean;
     isConfirmed: boolean;
 
-    transferId: String;
+    transferId: string;
 
-    key1: String;
-    fullKey: String;
-    mediaLink: String;
-    musicLink: String;
+    key1: string;
+    fullKey: string;
+    mediaLink: string;
+    musicLink: string;
 
-    transactionHash: String;
-    contractAddress: String;
-    transactionStatus: String;
+    transactionHash: string;
+    contractAddress: string;
+    transactionStatus: string;
 
-    dateCreated: String;
+    dateCreated: string;
 }
