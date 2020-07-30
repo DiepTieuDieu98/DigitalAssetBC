@@ -1,21 +1,21 @@
 export class Music {
-    name: String;
-    title: String;
-    album: String;
-    publishingYear: String;
+    name: string;
+    title: string;
+    album: string;
+    publishingYear: string;
     ownerId: Number;
-    licenceLink: String;
-    musicLink: String;
-    demoLink: String;
-    mediaLink: String;
+    licenceLink: string;
+    musicLink: string;
+    demoLink: string;
+    mediaLink: string;
 
-    key1: String;
-    key2: String;
-    fullKey: String;
+    key1: string;
+    key2: string;
+    fullKey: string;
 
-    creatureType: String;
-    ownerType: String;
+    creatureType: string;
+    ownerType: string;
 
-    transactionHash: String;
-    contractAddress: String;
+    transactionHash: string;
+    contractAddress: string;
 }

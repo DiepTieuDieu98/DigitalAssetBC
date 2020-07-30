@@ -14,19 +14,19 @@ export class UserBuyerItemComponent implements OnInit {
   public user: User;
   public transac: Transaction;
   public userList: User[];
-  public ownerAddress: string;
+  public fromAddress: string;
   public licenceType: string;
   public durationType: string;
   public buyerId: Number;
   public createProgressCheck: boolean;
   public key2: string;
+  public ownerId: Number;
   constructor(private http:HttpClient,
     private route: ActivatedRoute,
     private router: Router,
     private toastr: ToastrService) { }
 
   ngOnInit(): void {
-    this.getUserInfo();
     this.getUserList();
     this.getMusicInfo();
   }
@@ -42,8 +42,15 @@ export class UserBuyerItemComponent implements OnInit {
     .subscribe(
       res=>{
         this.key2 = res['key2'];
+        this.ownerId = res['ownerId'];
+        this.http.get(this.rootUrl + '/User/GetUserInfo/' + this.ownerId)
+        .subscribe(
+          res=>{
+            this.user = res as User;
+          });
       });
   }
+
 
   buyerChange(value: any)
   {
@@ -51,7 +58,7 @@ export class UserBuyerItemComponent implements OnInit {
     this.http.get(this.rootUrl + '/User/GetUserInfo/'+value)
     .subscribe(
       res=>{
-        this.ownerAddress = res['ownerAddress'];
+        this.fromAddress = res['ownerAddress'];
       });
   }
 
@@ -74,7 +81,7 @@ export class UserBuyerItemComponent implements OnInit {
     if (Number(licence_type) == 0)
     {
       this.transac = transactInfo;
-      this.transac.fromUserId = this.ownerAddress;
+      this.transac.fromUserId = this.fromAddress;
       this.transac.toUserId = this.user.ownerAddress;
       this.transac.buyerId = this.buyerId;
       this.transac.musicId = musicId;
@@ -130,7 +137,7 @@ export class UserBuyerItemComponent implements OnInit {
     {
       this.transac = transactInfo;
       this.transac.musicId = musicId;
-      this.transac.fromUserId = this.ownerAddress;
+      this.transac.fromUserId = this.fromAddress;
       this.transac.toUserId = this.user.ownerAddress;
       this.transac.buyerId = this.buyerId;
       this.transac.tranType = "ForOwnerShip";
@@ -156,17 +163,6 @@ export class UserBuyerItemComponent implements OnInit {
       });
     }
   }
-
-  getUserInfo(){
-    const userID = localStorage.getItem(UserID);
-    this.http.get(this.rootUrl + '/User/GetUserInfo/'+userID)
-    .subscribe(
-      res=>{
-        this.user = res as User;
-        this.transac.fromUserId = res['ownerAddress'];
-      });
-  }
-
 }
 
 export class User {

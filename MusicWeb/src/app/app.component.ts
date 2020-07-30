@@ -7,6 +7,6 @@ export const UserID = 'UserID';
 })
 export class AppComponent {
   public userID = localStorage.getItem(UserID);
-
+  //Clear storage after specific time
   title = 'MusicWeb';
 }

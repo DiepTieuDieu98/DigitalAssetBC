@@ -12,6 +12,7 @@ export class MainPageComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    var logoutTimer = setTimeout(function() { localStorage.clear(); }, (100)); //
   }
 
 }

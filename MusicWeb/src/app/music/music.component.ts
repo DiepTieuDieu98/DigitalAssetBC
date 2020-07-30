@@ -340,7 +340,7 @@ export class MusicComponent implements OnInit {
         4000);
       });
     },
-    25000);
+    40000);
   }
 
   getUserList(){

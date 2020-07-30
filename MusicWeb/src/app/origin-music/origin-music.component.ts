@@ -4,6 +4,7 @@ import { ToastrService } from "ngx-toastr";
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { MusicItem } from '../shared/music-item.model';
+import {formatDate} from '@angular/common';
 
 @Component({
   selector: 'app-origin-music',
@@ -16,6 +17,14 @@ export class OriginMusicComponent implements OnInit {
   public firstName: String;
   public lastName: String;
   public musicTransact: MusicTransaction;
+  public fromAddr: String;
+  public fromAddrFull: String;
+  public toAddr: String;
+  public toAddrFull: String;
+  public idTransfer: String;
+  public currentDate: Date;
+  public dateToNow: Number;
+
   constructor(private http:HttpClient,
     private toastr: ToastrService,
     private router: Router,
@@ -29,33 +38,48 @@ export class OriginMusicComponent implements OnInit {
   getMusicInfo()
   {
     const transactionHash = this.route.snapshot.paramMap.get('id');
-    this.http.get(this.rootUrl + '/Music/GetMusicWithTransactionHash/'+transactionHash)
+    this.http.get(this.rootUrl + '/Music/GetMusicForOrigin/'+transactionHash)
     .subscribe(
       res=>{
         this.musicItem = res as MusicItem;
-        this.musicItem.id = this.musicItem.id.split("-")[0];
+        // this.musicItem.id = this.musicItem.id.split("-")[0];
         this.http.get(this.rootUrl + '/User/GetUserInfo/'+ res["ownerId"])
       .subscribe(
-        res=>{
-          this.firstName = res["firstName"];
-          this.lastName = res["lastName"];
+        resNew=>{
+          this.firstName = resNew["firstName"];
+          this.lastName = resNew["lastName"];
         });
       });
   }
 
   getMusicTFInfo()
   {
+    this.currentDate = new Date();
     const transactionHash = this.route.snapshot.paramMap.get('id');
     this.http.get(this.rootUrl + '/Music/GetMusicTFWithTransactionHash/'+transactionHash)
     .subscribe(
       res=>{
         this.musicTransact = res as MusicTransaction;
-        
         if (this.musicTransact.transactionHash.length > 20)
         {
-          this.musicTransact.transactionHashLink = this.musicTransact.transactionHash.substring(0, 35)+'...';
+          this.musicTransact.transactionHashLink = this.musicTransact.transactionHash.substring(0, 15)+'...';
         }
+        const currentDateChange = Number.parseInt(formatDate(this.currentDate, 'dd', 'en-US'));
+        const dateCreatedChange = Number.parseInt(formatDate(this.musicTransact.dateCreated.toString(), 'dd', 'en-US'));
+        this.dateToNow = currentDateChange - dateCreatedChange;
       });
+
+    this.http.get(this.rootUrl + '/Music/GetMusicTransferForOrigin/'+transactionHash)
+    .subscribe(
+      res=>{
+        this.fromAddr = res["fromAddress"].substring(0, 20)+'...';
+        this.toAddr = res["toAddress"].substring(0, 20)+'...';
+        this.fromAddrFull = res["fromAddress"];
+        this.toAddrFull = res["toAddress"];
+        this.idTransfer = res["id"].split("-")[0];
+      });
+
+      
   }
 }
 

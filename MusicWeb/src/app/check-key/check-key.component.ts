@@ -19,6 +19,7 @@ export class CheckKeyComponent implements OnInit {
   public mediaLinkTrust: SafeUrl;
   public musicLinkTrust: SafeUrl;
   public createKey: CreateKey;
+  public media: MediaLink;
   public blobUpdate: BlobUpdate;
   public fullKey: Number;
   public fullKeyCheck: boolean;
@@ -51,10 +52,17 @@ export class CheckKeyComponent implements OnInit {
     this.http.post(this.rootUrl + '/UploadMusicAsset/DownloadFileEncryptAndUploadMedia', blobUpdate)
       .subscribe(
         res=>{
-          this.createMediaProgressCheck = true;
-          this.toastr.success("Mã hóa file thành công", "Success", {
-            positionClass: "toast-top-right",
-            timeOut: 2000
+          this.media = new MediaLink();
+          this.media.id = infoId.split("_")[3];
+          this.media.mediaLink = res["url"];
+          this.http.post(this.rootUrl + '/MusicAssetTransfers/UpdateMediaLink', this.media)
+          .subscribe(
+            resNew=>{
+              this.createMediaProgressCheck = true;
+              this.toastr.success("Mã hóa file thành công", "Success", {
+                positionClass: "toast-top-right",
+                timeOut: 2000
+              });
           });
       });
   }
@@ -100,7 +108,8 @@ export class CheckKeyComponent implements OnInit {
         
                         if (this.creatureType == 3)
                         {
-                          if (infoId.split("_")[4] != undefined)
+                          console.log(infoId.split("_")[4])
+                          if (infoId.split("_")[4] != "")
                           {
                             this.mediaLink = "localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[4];
                             this.mediaLinkTrust = this.sanitizer.bypassSecurityTrustUrl("http://localhost:8080/hdwallets/Streaming/video_streaming.php?mediaLink=" + infoId.split("_")[4]);
@@ -182,6 +191,11 @@ export class CheckKeyComponent implements OnInit {
 export class CreateKey {
   key1X: Number;
   key2X: Number;
+}
+
+export class MediaLink {
+  id: string;
+  mediaLink: string;
 }
 
 export class BlobUpdate {
