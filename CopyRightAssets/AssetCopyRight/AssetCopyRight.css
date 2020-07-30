@@ -3,7 +3,7 @@
  body {
      background-color: #eeeeee;
      font-family: 'Open Sans', serif;
-     color: black;
+     color: #cbe5ff;
  }
 
  .contain-info {
@@ -12,7 +12,8 @@
 
  .container {
      margin-top: 50px;
-     margin-bottom: 50px
+     margin-bottom: 50px;
+     color: black;
  }
 
  .card {
