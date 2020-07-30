@@ -233,11 +233,12 @@ namespace MusicServer.Controllers
 
             try
             {
-                
+
+                var currentDirectory = System.IO.Directory.GetCurrentDirectory();
 
                 ConfigWrapper config = new ConfigWrapper(new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("C:/Users/ALIENWARE.000/Desktop/Front/MusicServer/MusicServer/appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile(currentDirectory+"/appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build());
 
@@ -308,37 +309,5 @@ namespace MusicServer.Controllers
 
 
         }
-
-        //// GET: api/UploadMusicAsset
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET: api/UploadMusicAsset/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST: api/UploadMusicAsset
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT: api/UploadMusicAsset/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        //// DELETE: api/ApiWithActions/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
     }
 }

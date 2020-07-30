@@ -330,6 +330,40 @@ namespace MusicServer.Services.Enforcements
             }
         }
 
+        async Task<MusicInfoSC> IMusicService.GetMusicAssetForOrigin(string transactionHash)
+        {
+            var music = musicRepository.GetMusicWithTransactionHash(transactionHash);
+            ethereumService.SetMasterContractAddress(music.ContractAddress);
+            var function = ethereumService.GetFunction("getMusicAsset");
+            try
+            {
+                var result = await function.CallDeserializingToObjectAsync<MusicInfoSC>(music.OwnerId.ToString(), music.Id.ToString());
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        async Task<MusicTransferSC> IMusicService.GetMusicTransferForOrigin(string transactionHash)
+        {
+            var musicTF = musicRepository.GetMusicTFWithTransactionHash(transactionHash);
+            ethereumService.SetMasterContractAddress(musicTF.ContractAddress);
+            var function = ethereumService.GetFunction("getMusicAssetTransfer");
+            try
+            {
+                var result = await function.CallDeserializingToObjectAsync<MusicTransferSC>(musicTF.Id.ToString());
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         MusicInfo IMusicService.GetMusicWithTransactionHash(string transactionHash)
         {
             try

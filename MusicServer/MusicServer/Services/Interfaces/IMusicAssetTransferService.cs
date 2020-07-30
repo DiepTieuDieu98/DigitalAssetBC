@@ -34,6 +34,8 @@ namespace MusicServer.Services.Interfaces
 
         Task UpdateLicenceTransaction(Guid id, Guid musicId);
 
+        void UpdateMediaLink(Guid id, string mediaLink);
+
 
         List<MusicAssetTransferQueryData> GetAll();
         List<MusicAssetTransfer> GetTransactMusic(Guid id);

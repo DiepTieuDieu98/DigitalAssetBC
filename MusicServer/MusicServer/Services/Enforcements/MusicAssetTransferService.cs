@@ -263,6 +263,13 @@ namespace MusicServer.Services.Enforcements
             );
         }
 
+        void IMusicAssetTransferService.UpdateMediaLink(Guid id, string mediaLink)
+        {
+            var transfer = musicAssetTransferRepository.GetSC(id);
+            transfer.MediaLink = mediaLink;
+            musicAssetTransferRepository.Update(transfer);
+        }
+
         MusicAssetTransfer IMusicAssetTransferService.Get(Guid id)
         {
             var result = musicAssetTransferRepository.Get(id);
@@ -399,6 +406,5 @@ namespace MusicServer.Services.Enforcements
                 throw ex;
             }
         }
-
     }
 }

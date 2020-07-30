@@ -115,6 +115,22 @@ namespace MusicServer.Controllers
             }
         }
 
+        [HttpPost("UpdateMediaLink")]
+        public IActionResult UpdateMediaLink(
+            [FromBody] CreateMediaLinkCommand command
+            )
+        {
+            try
+            {
+                musicAssetTransferService.UpdateMediaLink(command.id, command.mediaLink);
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
         [HttpGet("GetTransfers")]
         public IActionResult GetTransfers()
         {

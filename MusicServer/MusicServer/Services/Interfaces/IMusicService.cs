@@ -51,6 +51,8 @@ namespace MusicServer.Services.Interfaces
         ShareOwnerShip GetMusicWithIdAndUserId(Guid musicId, int userId);
 
         Task<MusicInfoSC> GetMusicAsset(int ownerId, Guid id);
+        Task<MusicInfoSC> GetMusicAssetForOrigin(string transactionHash);
+        Task<MusicTransferSC> GetMusicTransferForOrigin(string transactionHash);
 
         MusicInfo GetMusicWithTransactionHash(string transactionHash);
         MusicAssetTransfer GetMusicTFWithTransactionHash(string transactionHash);
