@@ -76,9 +76,8 @@ namespace MusicServer.Services.Enforcements
                 }
             }
 
-            
+
             File.Delete(path_project_bin + "/bin/file-test/test-decrypt" + blobName);
-            //File.Delete(filePath);
             return urlStream;
 
             //Console.WriteLine("Done. Copy and paste the Streaming URL into the Azure Media Player at 'http://aka.ms/azuremediaplayer'.");

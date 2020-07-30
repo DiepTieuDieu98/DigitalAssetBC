@@ -326,6 +326,34 @@ namespace MusicServer.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
-        }     
+        }
+
+        [HttpGet("GetMusicForOrigin/{transactionHash}")]
+        public async Task<IActionResult> GetMusicForOrigin(string transactionHash)
+        {
+            try
+            {
+                var result = await musicService.GetMusicAssetForOrigin(transactionHash);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpGet("GetMusicTransferForOrigin/{transactionHash}")]
+        public async Task<IActionResult> GetMusicTransferForOrigin(string transactionHash)
+        {
+            try
+            {
+                var result = await musicService.GetMusicTransferForOrigin(transactionHash);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
     }
 }

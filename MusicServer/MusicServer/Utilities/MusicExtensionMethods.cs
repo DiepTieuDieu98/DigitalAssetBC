@@ -25,7 +25,8 @@ namespace MusicServer.Utilities
                 TransactionHash = music.TransactionHash,
                 TransactionStatus = music.TransactionStatus.ToString(),
                 CreatureType = music.CreatureType.ToString(),
-                OwnerType = music.OwnerType.ToString()
+                OwnerType = music.OwnerType.ToString(),
+                OwnerId = music.OwnerId
             };
             return result;
         }

@@ -219,29 +219,8 @@ namespace MusicServer.Services.Enforcements
                 
             }
 
-            //(this as IUploadMusicService).AES_Decrypt(path_project_bin + "/bin/file-test/test" + blobName, path_project_bin + "/bin/file-test/test-decrypt" + blobName, "abc1212");
-            //File.Delete(path_project_bin + "/bin/file-test/test" + blobName);
-
-            //(this as IUploadMusicService).AES_Encrypt(path_project_bin + "/bin/file-test/test-decrypt" + blobName, path_project_bin + "/bin/file-test/test-encrypt" + blobName, "abc1313");
-            //File.Delete(path_project_bin + "/bin/file-test/test-decrypt" + blobName);
-
-             (this as IUploadMusicService).AES_Decrypt(path_project_bin + "/bin/file-test/test" + blobName, path_project_bin + "/bin/file-test/test-decrypt" + blobName, password);
+            (this as IUploadMusicService).AES_Decrypt(path_project_bin + "/bin/file-test/test" + blobName, path_project_bin + "/bin/file-test/test-decrypt" + blobName, password);
             File.Delete(path_project_bin + "/bin/file-test/test" + blobName);
-
-            //using (var EncryptfileStream = System.IO.File.OpenRead(path_project_bin + "/bin/file-test/test-encrypt" + blobName))
-            //{
-            //    blobClient.DeleteIfExistsAsync();
-
-            //    var fileName = System.IO.Path.GetFileNameWithoutExtension(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
-            //    var fileExtension = System.IO.Path.GetExtension(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
-            //    var uniqueFileName = fileName + "-" + Guid.NewGuid().ToString() + fileExtension;
-
-            //    BlobClient blobClientEncrypt = containerClient.GetBlobClient(uniqueFileName);
-            //    blobClientEncrypt.Upload(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
-            //}
-
-            //File.Delete(path_project_bin + "/bin/file-test/test-encrypt" + blobName);
-            //blobClient.StartCopyFromUriAsync(blobClient.Uri);
         }
 
         string IUploadMusicService.CopyFileEncryptAndUploadToAzureBlobOwnerShip(string blobName, string old_password, string new_password, ResourceTypes resourceType = ResourceTypes.Other)
