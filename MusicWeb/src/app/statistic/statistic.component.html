@@ -68,9 +68,9 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let item of musicItemList">
+            <tr *ngFor="let item of musicItemList; let indexOfelement=index;">
                 <td>{{item.name}}</td>
-                <td>{{item.title}}</td>
+                <td>Title {{indexOfelement+1}}</td>
                 <td>{{item.album}}</td>    
                 <td>{{item.publishingYear}}</td>
                 <td>{{item.ownerId}}</td>
