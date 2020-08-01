@@ -23,7 +23,7 @@ export class OriginMusicComponent implements OnInit {
   public toAddrFull: String;
   public idTransfer: String;
   public currentDate: Date;
-  public dateToNow: Number;
+  public dateToNow: number;
 
   constructor(private http:HttpClient,
     private toastr: ToastrService,
@@ -52,6 +52,14 @@ export class OriginMusicComponent implements OnInit {
       });
   }
 
+  getdateDistanceCalculate(year: number, month: number, day: number) {
+    if (month < 3) {
+        year--;
+        month += 12;
+    }
+    return 365*year + year/4 - year/100 + year/400 + (153*month - 457)/5 + day - 306;
+  }
+
   getMusicTFInfo()
   {
     this.currentDate = new Date();
@@ -65,8 +73,16 @@ export class OriginMusicComponent implements OnInit {
           this.musicTransact.transactionHashLink = this.musicTransact.transactionHash.substring(0, 15)+'...';
         }
         const currentDateChange = Number.parseInt(formatDate(this.currentDate, 'dd', 'en-US'));
+        const currentMonthChange = Number.parseInt(formatDate(this.currentDate, 'MM', 'en-US'));
+        const currentYearChange = Number.parseInt(formatDate(this.currentDate, 'yyyy', 'en-US'));
+        
+
         const dateCreatedChange = Number.parseInt(formatDate(this.musicTransact.dateCreated.toString(), 'dd', 'en-US'));
-        this.dateToNow = currentDateChange - dateCreatedChange;
+        const monthCreatedChange = Number.parseInt(formatDate(this.musicTransact.dateCreated.toString(), 'MM', 'en-US'));
+        const yearCreatedChange = Number.parseInt(formatDate(this.musicTransact.dateCreated.toString(), 'yyyy', 'en-US'));
+
+        this.dateToNow = this.getdateDistanceCalculate(currentYearChange, currentMonthChange, currentDateChange) - this.getdateDistanceCalculate(yearCreatedChange, monthCreatedChange, dateCreatedChange);      
+        this.dateToNow = Number.parseInt(this.dateToNow.toFixed(0))
       });
 
     this.http.get(this.rootUrl + '/Music/GetMusicTransferForOrigin/'+transactionHash)
