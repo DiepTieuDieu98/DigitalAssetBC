@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
 	// write tags
 	if ($tagwriter->WriteTags()) {
-		header("Location:http://localhost/hdwallets/AssetCopyRight/AssetCopyRight_Split.php");	
+		header("Location:http://localhost:8080/hdwallets/AssetCopyRight/AssetCopyRight_Success.php");	
 	} else {
 		echo 'Failed to write tags!<br>'.implode('<br><br>', $tagwriter->errors);
 	}
