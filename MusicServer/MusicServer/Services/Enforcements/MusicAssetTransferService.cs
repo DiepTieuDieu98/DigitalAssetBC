@@ -210,12 +210,6 @@ namespace MusicServer.Services.Enforcements
             transfer.DateTransferred = currentTime;
             transfer.Key2 = music.Key2;
 
-            var privateKey = musicAssetTransferRepository.GetUserInfo(transfer.BuyerId).OwnerPrivateKey;
-            //var privateKey = "0xC40B82DCA66F1B0F117851AEF8E40D197F55499B09858B89AF2F8FF3B4FE83F3";
-            var account = new Account(privateKey);
-            Web3 web3 = new Web3(account, "https://ropsten.infura.io/v3/aaceb4b7c236404e9eb5416bef5292e0");
-            var transaction = web3.Eth.GetEtherTransferService().TransferEtherAndWaitForReceiptAsync(transfer.ToId.ToString(), transfer.AmountValue);
-
             var deployContract = ethereumService.DeployContract();
             bool isCreatedContract = false;
             do
@@ -256,6 +250,12 @@ namespace MusicServer.Services.Enforcements
                 }
             }
             while (isCreatedContract != true);
+
+            var privateKey = musicAssetTransferRepository.GetUserInfo(transfer.BuyerId).OwnerPrivateKey;
+            //var privateKey = "0xC40B82DCA66F1B0F117851AEF8E40D197F55499B09858B89AF2F8FF3B4FE83F3";
+            var account = new Account(privateKey);
+            Web3 web3 = new Web3(account, "https://ropsten.infura.io/v3/aaceb4b7c236404e9eb5416bef5292e0");
+            var transaction = web3.Eth.GetEtherTransferService().TransferEtherAndWaitForReceiptAsync(transfer.ToId.ToString(), transfer.AmountValue);
 
             BackgroundJob.Schedule<IMusicAssetTransferUndergroundJob>(
                 job => job.WaitForTransactionToSuccessThenFinishCreating(transfer),
