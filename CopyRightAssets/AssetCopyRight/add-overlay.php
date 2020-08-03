@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 	system($command);
 	 
 	// echo "Overlay has been added";
-    header("Location:http://localhost/hdwallets/AssetCopyRight/AssetCopyRight_Split.php");    
+    header("Location:http://localhost:8080/hdwallets/AssetCopyRight/AssetCopyRight_Split.php");    
 }
 
  
