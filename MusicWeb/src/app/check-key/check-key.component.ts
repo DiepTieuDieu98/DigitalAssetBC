@@ -39,15 +39,13 @@ export class CheckKeyComponent implements OnInit {
 
   playMusic()
   {
+    this.userID = localStorage.getItem(UserID);
+
     const infoId = this.route.snapshot.paramMap.get('id');
     this.blobName = infoId.split("_")[2];
-    // console.log(this.fullKey);
     const blobUpdate = new FormData();
     blobUpdate.append('blobName', this.blobName);
     blobUpdate.append('password', this.fullKey.toString());
-    // this.blobUpdate = new BlobUpdate();
-    // this.blobUpdate.blobName = this.blobName;
-    // this.blobUpdate.password = this.fullKey.toString();
     this.createMediaProgressCheck = false;
     this.http.post(this.rootUrl + '/UploadMusicAsset/DownloadFileEncryptAndUploadMedia', blobUpdate)
       .subscribe(
@@ -63,6 +61,11 @@ export class CheckKeyComponent implements OnInit {
                 positionClass: "toast-top-right",
                 timeOut: 2000
               });
+              setTimeout(() => 
+              {
+                this.router.navigate(['/music/user-seller/'+this.userID]);
+              },
+              2000);
           });
       });
   }
@@ -96,8 +99,6 @@ export class CheckKeyComponent implements OnInit {
                 .subscribe(
                   resNew=>{
                     this.fullKey = resNew['fullKey'];
-                      // console.log(this.fullKey);
-                      // console.log(res['fullKey']);
                     if (this.fullKey == res['fullKey'])
                     {
                         this.fullKeyCheck = true;

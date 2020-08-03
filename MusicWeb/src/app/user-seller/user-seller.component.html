@@ -124,7 +124,7 @@
                         <h6 *ngIf="userTypeCheck == 'buyer' && item.isPermanent == true && item.isConfirmed == false">Khóa 1: <label style="color: #ff2f8e;">{{item.key1}}</label></h6>
                         <h6 *ngIf="userTypeCheck == 'buyer' && item.isPermanent == true && item.isConfirmed == true">Khóa đầy đủ: <label style="color: #ff2f8e;">{{item.fullKey}}</label></h6>
                         <h6 *ngIf="userTypeCheck == 'seller'">Khóa đầy đủ: <label style="color: #ff2f8e;">{{item.fullKey}}</label></h6>
-                        <img src="../../assets/share.png" alt="" class="btn" style="width: 78px; height: 66px; cursor: pointer; position: absolute; right: -2px; bottom: 69px;" data-toggle="modal" data-target="#shareOwnerShip" (click)="loadMusicId(item.id)">
+                        <img *ngIf="userTypeCheck == 'seller'" src="../../assets/share.png" alt="" class="btn" style="width: 78px; height: 66px; cursor: pointer; position: absolute; right: -2px; bottom: 69px;" data-toggle="modal" data-target="#shareOwnerShip" (click)="loadMusicId(item.id)">
                     </div>
                     
                     <hr>

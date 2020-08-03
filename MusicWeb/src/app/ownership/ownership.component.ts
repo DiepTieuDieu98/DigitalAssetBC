@@ -86,6 +86,16 @@ export class OwnershipComponent implements OnInit {
         });
     }
     
+    if (this.key2 == null)
+    {
+      this.http.get(this.rootUrl + '/MusicAssetTransfers/GetTransfer/'+infoMusic.split("_")[0])
+      .subscribe(res =>{
+        this.http.get(this.rootUrl + '/Music/GetMusicWithId/'+res['musicId'])
+        .subscribe(resNew =>{
+            this.key2 = resNew["key2"];
+        });
+      });
+    }
   }
 
   changeOwnerShip()
