@@ -19,7 +19,6 @@ namespace MusicServer.Services.Enforcements
     public class UploadEncodeAndStreamFiles : IUploadEncodeAndStreamFiles
     {
         private const string AdaptiveStreamingTransformName = "MyTransformWithAdaptiveStreamingPreset";
-        private const string InputMP4FileName = "C:/Users/ALIENWARE.000/Desktop/MusicBC/New folder/MusicServer/MusicServer/bin/file/sampleLarge.mp4";
 
         /// <summary>
         /// Run the sample async.
